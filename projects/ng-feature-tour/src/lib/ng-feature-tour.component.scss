@@ -27,6 +27,24 @@
     margin: 0 0 16px 0;
   }
 
+  &-bullets {
+    display: flex;
+    margin: 0 0 16px 0;
+
+    .bullet {
+      display: block;
+      width: 10px;
+      height: 10px;
+      background-color: #bdc3c7;
+      margin-right: 10px;
+      border-radius: 50%;
+
+      &.is-active {
+        background-color: #2980b9;
+      }
+    }
+  }
+
   &-control {
     display: flex;
     align-items: center;
