@@ -111,6 +111,46 @@
           }
         }
       }
+    },
+    "ng-feature-tour": {
+      "projectType": "library",
+      "root": "projects/ng-feature-tour",
+      "sourceRoot": "projects/ng-feature-tour/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/ng-feature-tour/tsconfig.lib.json",
+            "project": "projects/ng-feature-tour/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ng-feature-tour/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ng-feature-tour/src/test.ts",
+            "tsConfig": "projects/ng-feature-tour/tsconfig.spec.json",
+            "karmaConfig": "projects/ng-feature-tour/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ng-feature-tour/tsconfig.lib.json",
+              "projects/ng-feature-tour/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "ng-feature-tour-app"
