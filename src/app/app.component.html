@@ -1,3 +1,5 @@
+<ng-feature-tour [setup]="tour"></ng-feature-tour>
+
 <main class="wrapper">
   <h1 class="title">
     Ng Feature Tour
@@ -6,10 +8,6 @@
     Lorem ipsum dolor sit, amet consectetur adipisicing elit. Amet sunt
     laudantium autem reiciendis beatae.
   </p>
-
-  <button class="btn">
-    Start tour
-  </button>
 
   <section class="feature-list">
     <article id="featureEasy" class="feature">
@@ -27,4 +25,8 @@
       <h4>Accessible</h4>
     </article>
   </section>
+
+  <button class="btn" (click)="start()">
+    Start tour
+  </button>
 </main>
