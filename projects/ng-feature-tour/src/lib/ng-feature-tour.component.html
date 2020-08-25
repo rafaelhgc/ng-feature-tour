@@ -1,25 +1,26 @@
-<div class="tour-step">
-  <h4 class="tour-step-title">This is a feature step</h4>
-  <p class="tour-step-description">
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum vitae commodi
-    quis.
-  </p>
-  <div class="tour-step-bullets">
-    <span class="bullet is-active"></span>
-    <span class="bullet"></span>
-    <span class="bullet"></span>
+<div #step class="step" [class.is-active]="active">
+  <h4 class="step-title">{{ getCurrentStep().title }}</h4>
+  <p class="step-description">{{ getCurrentStep().description }}</p>
+  <div class="step-bullets">
+    <span
+      class="bullet"
+      [class.is-current]="currentStep === i"
+      *ngFor="let step of steps; let i = index"
+    ></span>
   </div>
+  <nav class="step-controls">
+    <button class="step-controls-button">
+      I got it
+    </button>
 
-  <nav class="tour-step-control">
-    <button class="button">I got it</button>
-    <div class="tour-step-control-navigation">
-      <button class="button call-to-action">
-        Previus
+    <div class="step-controls-navigation">
+      <button class="step-controls-button" (click)="previous()">
+        Previous
       </button>
-      <button class="button call-to-action">
+      <button class="step-controls-button" (click)="next()">
         Next
       </button>
     </div>
   </nav>
 </div>
-<div class="overlay"></div>
+<div #stepScope class="step-scope" [class.is-active]="active"></div>

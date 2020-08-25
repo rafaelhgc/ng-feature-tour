@@ -1,83 +1,73 @@
-.tour-step {
-  top: 100px;
+.step {
   position: fixed;
-  font-family: sans-serif;
-  z-index: 9900;
+  z-index: 9999;
   background-color: #ffffff;
   padding: 16px;
-  border-radius: 8px;
-  max-width: 100%;
-  box-sizing: border-box;
+  border-radius: 4px;
+  display: none;
 
-  &::before {
-    content: "";
-    border-style: solid;
-    border-width: 0 16px 16px 16px;
-    border-color: transparent transparent white transparent;
-    position: fixed;
-    transform: translateY(-32px);
+  &.is-active {
+    display: block;
   }
 
   &-title {
-    margin: 0 0 16px 0;
-    font-size: 18px;
+    font-size: 20px;
+    margin-bottom: 16px;
   }
 
   &-description {
-    margin: 0 0 16px 0;
+    font-size: 18px;
+    margin-bottom: 16px;
   }
 
   &-bullets {
+    margin-bottom: 16px;
     display: flex;
-    margin: 0 0 16px 0;
 
     .bullet {
       display: block;
       width: 10px;
       height: 10px;
-      background-color: #bdc3c7;
+      background-color: #95a5a6;
       margin-right: 10px;
       border-radius: 50%;
 
-      &.is-active {
+      &.is-current {
         background-color: #2980b9;
       }
     }
   }
 
-  &-control {
+  &-controls {
     display: flex;
-    align-items: center;
     justify-content: space-between;
 
-    &-navigation button:last-child {
+    &-navigation button {
       margin-left: 16px;
+      background-color: #2980b9;
+      color: #ffffff;
+    }
+
+    &-button {
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 8px 16px;
+      background-color: transparent;
+      border: 2px solid #2980b9;
+      color: #2980b9;
     }
   }
-}
 
-.button {
-  appearance: none;
-  border-radius: 4px;
-  border: 1px solid #2980b9;
-  font-size: 14px;
-  font-weight: 700;
-  padding: 8px 16px;
-  background-color: transparent;
-  color: #2980b9;
+  &-scope {
+    display: none;
+    position: fixed;
+    background-color: transparent;
+    box-shadow: 0 0 0 100000px rgba(0, 0, 0, 0.75);
+    z-index: 9990;
 
-  &.call-to-action {
-    background-color: #2980b9;
-    color: #ffffff;
+    &.is-active {
+      display: block;
+    }
   }
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background-color: rgba(#000000, 0.75);
-  z-index: 9000;
 }

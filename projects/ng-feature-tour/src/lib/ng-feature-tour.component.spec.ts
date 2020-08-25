@@ -8,9 +8,8 @@ describe('NgFeatureTourComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NgFeatureTourComponent ]
-    })
-    .compileComponents();
+      declarations: [NgFeatureTourComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
