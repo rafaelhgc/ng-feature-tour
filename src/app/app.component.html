@@ -1,10 +1,10 @@
 <ng-feature-tour
   #step
   [steps]="steps"
-  (onNext)="handleNext($event)"
-  (onPrevious)="handlePrevious($event)"
-  (onAbort)="handleAbort($event)"
-  (onFinish)="handleFinish($event)"
+  (onNext)="onNext($event)"
+  (onPrevious)="onPrevious($event)"
+  (onAbort)="onAbort($event)"
+  (onFinish)="onFinish($event)"
 ></ng-feature-tour>
 
 <main class="wrapper">
