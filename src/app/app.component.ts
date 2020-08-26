@@ -1,16 +1,17 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NgFeatureTourComponent, TourStep } from 'ng-feature-tour';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   @ViewChild('step')
   child: NgFeatureTourComponent;
 
   title = 'ng-feature-tour-app';
+
+  events: any = [];
 
   steps: TourStep[] = [
     {
@@ -32,5 +33,22 @@ export class AppComponent {
 
   start(): void {
     this.child.start();
+    this.events = [];
+  }
+
+  handleNext(step: TourStep): void {
+    this.events.push({ event: 'NEXT', step });
+  }
+
+  handlePrevious(step: TourStep): void {
+    this.events.push({ event: 'PREVIOUS', step });
+  }
+
+  handleAbort(step: TourStep): void {
+    this.events.push({ event: 'ABORT', step });
+  }
+
+  handleFinish(step: TourStep): void {
+    this.events.push({ event: 'FINISH', step });
   }
 }

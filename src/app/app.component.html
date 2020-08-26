@@ -1,32 +1,48 @@
-<ng-feature-tour #step [steps]="steps"></ng-feature-tour>
+<ng-feature-tour
+  #step
+  [steps]="steps"
+  (onNext)="handleNext($event)"
+  (onPrevious)="handlePrevious($event)"
+  (onAbort)="handleAbort($event)"
+  (onFinish)="handleFinish($event)"
+></ng-feature-tour>
 
 <main class="wrapper">
-  <h1 class="title">
-    Ng Feature Tour
-  </h1>
-  <p>
-    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Amet sunt
-    laudantium autem reiciendis beatae.
-  </p>
+  <section>
+    <h1>Ng Feature Tour</h1>
+    <p>Launch new features with NgFeatureTour and show your users what's new</p>
 
-  <section class="feature-list">
-    <article id="featureEasy" class="feature">
-      <img src="/assets/img/easy.png" alt="" />
-      <h4>Easy</h4>
-    </article>
+    <button class="btn" (click)="start()">Start tour</button>
 
-    <article id="featureCustomizable" class="feature">
-      <img src="/assets/img/customizable.png" alt="" />
-      <h4>Customizable</h4>
-    </article>
+    <div class="feature-list">
+      <article id="featureEasy" class="feature">
+        <img src="/assets/img/easy.png" alt="" />
+        <h4>Easy</h4>
+      </article>
 
-    <article id="featureAccessible" class="feature">
-      <img src="/assets/img/accessible.png" alt="" />
-      <h4>Accessible</h4>
-    </article>
+      <article id="featureCustomizable" class="feature">
+        <img src="/assets/img/customizable.png" alt="" />
+        <h4>Customizable</h4>
+      </article>
+
+      <article id="featureAccessible" class="feature">
+        <img src="/assets/img/accessible.png" alt="" />
+        <h4>Accessible</h4>
+      </article>
+    </div>
   </section>
 
-  <button class="btn" (click)="start()">
-    Start tour
-  </button>
+  <section>
+    <h2>Events</h2>
+    <p>
+      Follow step by step with EventEmitter and see the user's journey through
+      the tour
+    </p>
+    <ul class="events">
+      <li *ngIf="events.length === 0">no events</li>
+      <li *ngFor="let event of events">
+        <code>{{ event | json }}</code>
+      </li>
+    </ul>
+  </section>
 </main>
