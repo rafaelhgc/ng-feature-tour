@@ -1,14 +1,13 @@
 import {
   Component,
+  Renderer2,
   Input,
   ViewChild,
-  Renderer2,
   ElementRef,
   Output,
   EventEmitter,
 } from '@angular/core';
-
-import { TourStep } from './ng-feature-tour.model';
+import { TourStep, TourEvent } from './ng-feature-tour.model';
 
 @Component({
   selector: 'ng-feature-tour',
@@ -16,99 +15,120 @@ import { TourStep } from './ng-feature-tour.model';
   styleUrls: ['./ng-feature-tour.component.scss'],
 })
 export class NgFeatureTourComponent {
-  @Output()
-  onNext: EventEmitter<TourStep>;
+  @ViewChild('step')
+  stepRef: ElementRef;
 
-  @Output()
-  onPrevious: EventEmitter<TourStep>;
-
-  @Output()
-  onAbort: EventEmitter<TourStep>;
-
-  @Output()
-  onFinish: EventEmitter<TourStep>;
+  @ViewChild('lens')
+  lensRef: ElementRef;
 
   @Input()
   steps: TourStep[];
 
   @Input()
-  stepIndex: number = 0;
+  initialStepTarget: string;
 
-  @ViewChild('step')
-  stepRef: ElementRef;
+  @Output()
+  onNext: EventEmitter<TourEvent>;
 
-  @ViewChild('scope')
-  stepScopeRef: ElementRef;
+  @Output()
+  onPrevious: EventEmitter<TourEvent>;
+
+  @Output()
+  onAbort: EventEmitter<TourEvent>;
+
+  @Output()
+  onFinish: EventEmitter<TourEvent>;
 
   currentStep: TourStep;
 
+  currentStepIndex: number;
+
+  stepTrack: string[];
+
   constructor(private renderer: Renderer2) {
-    this.onAbort = new EventEmitter<TourStep>();
-    this.onFinish = new EventEmitter<TourStep>();
-    this.onNext = new EventEmitter<TourStep>();
-    this.onPrevious = new EventEmitter<TourStep>();
+    this.onNext = new EventEmitter<TourEvent>();
+    this.onPrevious = new EventEmitter<TourEvent>();
+    this.onAbort = new EventEmitter<TourEvent>();
+    this.onFinish = new EventEmitter<TourEvent>();
   }
 
-  private applyStepBounds(): void {
-    const { height, width, x, y, bottom } = this.getStepBounds();
-    const arrowBoundSpace = 32;
-    const stepElement = this.stepRef.nativeElement;
-    const scopeElement = this.stepScopeRef.nativeElement;
-
-    this.renderer.setStyle(stepElement, 'left', `${x}px`);
-    this.renderer.setStyle(stepElement, 'top', `${bottom + arrowBoundSpace}px`);
-    this.renderer.setStyle(scopeElement, 'width', `${width}px`);
-    this.renderer.setStyle(scopeElement, 'height', `${height}px`);
-    this.renderer.setStyle(scopeElement, 'left', `${x}px`);
-    this.renderer.setStyle(scopeElement, 'top', `${y}px`);
+  private scrollToTop(target: string): void {
+    window.scrollTo(0, document.getElementById(target).offsetTop - 16);
   }
 
-  private getStepBounds(): DOMRect {
-    return document
-      .getElementById(this.currentStep.target)
-      .getBoundingClientRect();
+  private getIndexFromTarget(target: string): number {
+    let index = -1;
+
+    this.steps.forEach((step, i) => {
+      if (step.target === target) {
+        index = i;
+      }
+    });
+
+    return index;
   }
 
-  start(): void {
-    this.setCurrentStep();
-    this.applyStepBounds();
+  private applyBounds(target: string): void {
+    const rect = document.getElementById(target).getBoundingClientRect();
+    const step = this.stepRef.nativeElement;
+    const lens = this.lensRef.nativeElement;
+
+    this.renderer.setStyle(step, 'top', `${rect.bottom + 32}px`);
+    this.renderer.setStyle(step, 'left', `${rect.left}px`);
+
+    this.renderer.setStyle(lens, 'top', `${rect.top}px`);
+    this.renderer.setStyle(lens, 'left', `${rect.left}px`);
+    this.renderer.setStyle(lens, 'width', `${rect.width}px`);
+    this.renderer.setStyle(lens, 'height', `${rect.height}px`);
   }
 
-  finish(): void {
-    this.onFinish.emit(this.currentStep);
-    this.currentStep = null;
-    this.stepIndex = 0;
-  }
-
-  abort(): void {
-    this.onAbort.emit(this.currentStep);
-    this.currentStep = null;
-    this.stepIndex = 0;
+  start() {
+    this.stepTrack = [];
+    this.initialStepTarget = this.initialStepTarget || this.steps[0].target;
+    this.currentStepIndex = this.getIndexFromTarget(this.initialStepTarget);
+    this.currentStep = this.steps[this.currentStepIndex];
+    this.stepTrack.push(this.currentStep.target);
+    this.scrollToTop(this.currentStep.target);
+    this.applyBounds(this.currentStep.target);
   }
 
   next(): void {
-    this.stepIndex++;
-    this.setCurrentStep();
-    this.applyStepBounds();
-    this.onNext.emit(this.currentStep);
+    this.currentStepIndex++;
+    this.currentStep = this.steps[this.currentStepIndex];
+    this.stepTrack.push(this.currentStep.target);
+    this.scrollToTop(this.currentStep.target);
+    this.applyBounds(this.currentStep.target);
+    this.onNext.emit({ event: 'NEXT', targetTrack: this.stepTrack });
   }
 
   previous(): void {
-    this.stepIndex--;
-    this.setCurrentStep();
-    this.applyStepBounds();
-    this.onPrevious.emit(this.currentStep);
+    this.currentStepIndex--;
+    this.currentStep = this.steps[this.currentStepIndex];
+    this.stepTrack.push(this.currentStep.target);
+    this.scrollToTop(this.currentStep.target);
+    this.applyBounds(this.currentStep.target);
+    this.onPrevious.emit({ event: 'PREVIOUS', targetTrack: this.stepTrack });
   }
 
-  setCurrentStep(): void {
-    this.currentStep = this.steps[this.stepIndex];
+  finish(): void {
+    this.currentStep = null;
+    this.onFinish.emit({ event: 'FINISH', targetTrack: this.stepTrack });
   }
 
-  isFirstStep(): boolean {
-    return this.stepIndex === 0;
+  abort(): void {
+    this.currentStep = null;
+    this.onAbort.emit({ event: 'ABORT', targetTrack: this.stepTrack });
+  }
+
+  isCurrentStep(step: TourStep): boolean {
+    return this.currentStep && step.target === this.currentStep.target;
   }
 
   isLastStep(): boolean {
-    return this.stepIndex === this.steps.length - 1;
+    return this.currentStepIndex === this.steps.length - 1;
+  }
+
+  isFirstStep(): boolean {
+    return this.currentStepIndex === 0;
   }
 }

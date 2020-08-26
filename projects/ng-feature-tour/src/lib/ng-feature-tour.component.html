@@ -1,8 +1,6 @@
 <div [hidden]="!currentStep">
   <div #step class="ng-feature-tour-step">
-    <h1 class="ng-feature-tour-step-title">
-      {{ currentStep?.title }}
-    </h1>
+    <h1 class="ng-feature-tour-step-title">{{ currentStep?.title }}</h1>
 
     <p class="ng-feature-tour-step-description">
       {{ currentStep?.description }}
@@ -10,23 +8,23 @@
 
     <div class="ng-feature-tour-step-bullet-list">
       <span
-        *ngFor="let step of steps; let i = index"
-        [class.is-current]="stepIndex === i"
+        *ngFor="let step of steps"
+        [class.is-current]="isCurrentStep(step)"
         class="ng-feature-tour-step-bullet"
       ></span>
     </div>
 
     <nav class="ng-feature-tour-step-controls">
-      <button (click)="finish()">I got it</button>
+      <button (click)="abort()">I got it</button>
 
       <div class="ng-feature-tour-step-navigation">
-        <button (click)="abort()" *ngIf="!isFirstStep()">Previous</button>
-        <button (click)="next()" *ngIf="!isLastStep()">Next</button>
-        <button (click)="finish()" *ngIf="isLastStep()">Finish</button>
+        <button *ngIf="!isFirstStep()" (click)="previous()">Previous</button>
+        <button *ngIf="!isLastStep()" (click)="next()">Next</button>
+        <button *ngIf="isLastStep()" (click)="finish()">Finish</button>
       </div>
     </nav>
   </div>
 
-  <div #scope class="ng-feature-tour-scope"></div>
+  <div #lens class="ng-feature-tour-lens"></div>
   <div class="ng-feature-tour-overlay"></div>
 </div>
