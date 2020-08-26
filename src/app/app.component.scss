@@ -30,7 +30,6 @@
 .feature-list {
   display: flex;
   background-color: white;
-  padding: 16px;
   margin-bottom: 64px;
   border-radius: 8px;
   width: 100%;
@@ -39,6 +38,7 @@
 .feature {
   flex: 1;
   display: flex;
+  padding: 16px;
   justify-content: baseline;
   align-items: center;
   flex-direction: column;
