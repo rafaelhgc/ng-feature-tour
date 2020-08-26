@@ -4,11 +4,6 @@
   background-color: #ffffff;
   padding: 16px;
   border-radius: 4px;
-  display: none;
-
-  &.is-active {
-    display: block;
-  }
 
   &-title {
     font-size: 20px;
@@ -58,16 +53,11 @@
       color: #2980b9;
     }
   }
+}
 
-  &-scope {
-    display: none;
-    position: fixed;
-    background-color: transparent;
-    box-shadow: 0 0 0 100000px rgba(0, 0, 0, 0.75);
-    z-index: 9990;
-
-    &.is-active {
-      display: block;
-    }
-  }
+.ng-feature-tour-scope {
+  position: fixed;
+  background-color: transparent;
+  box-shadow: 0 0 0 100000px rgba(0, 0, 0, 0.75);
+  z-index: 9990;
 }

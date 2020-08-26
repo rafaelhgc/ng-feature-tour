@@ -1,84 +1,85 @@
 import {
   Component,
-  OnInit,
   Input,
   ViewChild,
   Renderer2,
   ElementRef,
 } from '@angular/core';
-import { TourStep, StepBounds } from './ng-feature-tour.model';
+
+import { TourStep } from './ng-feature-tour.model';
 
 @Component({
   selector: 'ng-feature-tour',
   templateUrl: './ng-feature-tour.component.html',
   styleUrls: ['./ng-feature-tour.component.scss'],
 })
-export class NgFeatureTourComponent implements OnInit {
+export class NgFeatureTourComponent {
   @Input()
   steps: TourStep[];
 
   @Input()
-  currentStep: number = 0;
+  stepIndex: number = 0;
 
   @ViewChild('step')
   stepRef: ElementRef;
 
-  @ViewChild('stepScope')
+  @ViewChild('scope')
   stepScopeRef: ElementRef;
 
-  active: boolean;
+  currentStep: TourStep;
 
   constructor(private renderer: Renderer2) {}
 
   private applyStepBounds(): void {
-    const { x, y, scope } = this.getStepBounds();
+    const { height, width, x, y, bottom } = this.getStepBounds();
+    const arrowBoundSpace = 32;
     const stepElement = this.stepRef.nativeElement;
     const scopeElement = this.stepScopeRef.nativeElement;
 
     this.renderer.setStyle(stepElement, 'left', `${x}px`);
-    this.renderer.setStyle(stepElement, 'top', `${y}px`);
-    this.renderer.setStyle(scopeElement, 'width', `${scope.width}px`);
-    this.renderer.setStyle(scopeElement, 'height', `${scope.height}px`);
-    this.renderer.setStyle(scopeElement, 'left', `${scope.x}px`);
-    this.renderer.setStyle(scopeElement, 'top', `${scope.y}px`);
+    this.renderer.setStyle(stepElement, 'top', `${bottom + arrowBoundSpace}px`);
+    this.renderer.setStyle(scopeElement, 'width', `${width}px`);
+    this.renderer.setStyle(scopeElement, 'height', `${height}px`);
+    this.renderer.setStyle(scopeElement, 'left', `${x}px`);
+    this.renderer.setStyle(scopeElement, 'top', `${y}px`);
   }
 
-  private getStepBounds(): StepBounds {
-    const currentStep = this.getCurrentStep();
-    const el = document.getElementById(currentStep.target) as HTMLElement;
-    const targetBounds = el.getBoundingClientRect();
-    const arrowMargin = 32;
-
-    return {
-      x: targetBounds.left,
-      y: targetBounds.bottom + arrowMargin,
-      scope: {
-        width: targetBounds.width,
-        height: targetBounds.height,
-        x: targetBounds.left,
-        y: targetBounds.top,
-      },
-    };
+  private getStepBounds(): DOMRect {
+    return document
+      .getElementById(this.currentStep.target)
+      .getBoundingClientRect();
   }
-
-  ngOnInit(): void {}
 
   start(): void {
-    this.active = true;
+    this.setCurrentStep();
     this.applyStepBounds();
   }
 
+  finish(): void {
+    this.currentStep = null;
+  }
+
   next(): void {
-    this.currentStep++;
+    this.stepIndex++;
+    this.setCurrentStep();
     this.applyStepBounds();
   }
 
   previous(): void {
-    this.currentStep--;
+    this.stepIndex--;
+    this.setCurrentStep();
     this.applyStepBounds();
   }
 
-  getCurrentStep(): TourStep {
-    return this.steps[this.currentStep];
+  setCurrentStep(): void {
+    this.currentStep = this.steps[this.stepIndex];
+  }
+
+  isFirstStep(): boolean {
+    return this.stepIndex === 0;
+  }
+
+  isLastStep(): boolean {
+    return this.stepIndex === this.steps.length - 1;
   }
 }

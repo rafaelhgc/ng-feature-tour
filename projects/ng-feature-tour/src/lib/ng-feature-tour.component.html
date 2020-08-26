@@ -1,26 +1,41 @@
-<div #step class="step" [class.is-active]="active">
-  <h4 class="step-title">{{ getCurrentStep().title }}</h4>
-  <p class="step-description">{{ getCurrentStep().description }}</p>
+<div #step class="step" [hidden]="!currentStep">
+  <h4 class="step-title">{{ currentStep?.title }}</h4>
+  <p class="step-description">{{ currentStep?.description }}</p>
   <div class="step-bullets">
     <span
       class="bullet"
-      [class.is-current]="currentStep === i"
+      [class.is-current]="stepIndex === i"
       *ngFor="let step of steps; let i = index"
     ></span>
   </div>
   <nav class="step-controls">
-    <button class="step-controls-button">
-      I got it
-    </button>
+    <button class="step-controls-button" (click)="finish()">I got it</button>
 
     <div class="step-controls-navigation">
-      <button class="step-controls-button" (click)="previous()">
+      <button
+        class="step-controls-button"
+        (click)="previous()"
+        *ngIf="!isFirstStep()"
+      >
         Previous
       </button>
-      <button class="step-controls-button" (click)="next()">
+      <button
+        class="step-controls-button"
+        (click)="next()"
+        *ngIf="!isLastStep()"
+      >
         Next
+      </button>
+
+      <button
+        class="step-controls-button"
+        (click)="finish()"
+        *ngIf="isLastStep()"
+      >
+        Finish
       </button>
     </div>
   </nav>
 </div>
-<div #stepScope class="step-scope" [class.is-active]="active"></div>
+
+<div #scope class="ng-feature-tour-scope" [hidden]="!currentStep"></div>
