@@ -20,7 +20,7 @@
       <button (click)="finish()">I got it</button>
 
       <div class="ng-feature-tour-step-navigation">
-        <button (click)="previous()" *ngIf="!isFirstStep()">Previous</button>
+        <button (click)="abort()" *ngIf="!isFirstStep()">Previous</button>
         <button (click)="next()" *ngIf="!isLastStep()">Next</button>
         <button (click)="finish()" *ngIf="isLastStep()">Finish</button>
       </div>

@@ -4,6 +4,8 @@ import {
   ViewChild,
   Renderer2,
   ElementRef,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 
 import { TourStep } from './ng-feature-tour.model';
@@ -14,6 +16,18 @@ import { TourStep } from './ng-feature-tour.model';
   styleUrls: ['./ng-feature-tour.component.scss'],
 })
 export class NgFeatureTourComponent {
+  @Output()
+  onNext: EventEmitter<TourStep>;
+
+  @Output()
+  onPrevious: EventEmitter<TourStep>;
+
+  @Output()
+  onAbort: EventEmitter<TourStep>;
+
+  @Output()
+  onFinish: EventEmitter<TourStep>;
+
   @Input()
   steps: TourStep[];
 
@@ -28,7 +42,12 @@ export class NgFeatureTourComponent {
 
   currentStep: TourStep;
 
-  constructor(private renderer: Renderer2) {}
+  constructor(private renderer: Renderer2) {
+    this.onAbort = new EventEmitter<TourStep>();
+    this.onFinish = new EventEmitter<TourStep>();
+    this.onNext = new EventEmitter<TourStep>();
+    this.onPrevious = new EventEmitter<TourStep>();
+  }
 
   private applyStepBounds(): void {
     const { height, width, x, y, bottom } = this.getStepBounds();
@@ -56,19 +75,29 @@ export class NgFeatureTourComponent {
   }
 
   finish(): void {
+    this.onFinish.emit(this.currentStep);
     this.currentStep = null;
+    this.stepIndex = 0;
+  }
+
+  abort(): void {
+    this.onAbort.emit(this.currentStep);
+    this.currentStep = null;
+    this.stepIndex = 0;
   }
 
   next(): void {
     this.stepIndex++;
     this.setCurrentStep();
     this.applyStepBounds();
+    this.onNext.emit(this.currentStep);
   }
 
   previous(): void {
     this.stepIndex--;
     this.setCurrentStep();
     this.applyStepBounds();
+    this.onPrevious.emit(this.currentStep);
   }
 
   setCurrentStep(): void {
