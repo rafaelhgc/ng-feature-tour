@@ -1,4 +1,5 @@
 export enum EventEnum {
+  Start = 'START',
   Next = 'NEXT',
   Previous = 'PREVIOUS',
   Abort = 'ABORT',

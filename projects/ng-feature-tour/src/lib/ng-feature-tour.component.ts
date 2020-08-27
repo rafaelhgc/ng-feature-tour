@@ -61,18 +61,10 @@ export class NgFeatureTourComponent {
   }
 
   private getIndexFromTarget(target: string): number {
-    let index = -1;
-
-    this.steps.forEach((step, i) => {
-      if (step.target === target) {
-        index = i;
-      }
-    });
-
-    return index;
+    return this.steps.map(({ target }) => target).indexOf(target);
   }
 
-  emitChageEvent(target: string, event: EventEnum): void {
+  private emitChangeEvent(target: string, event: EventEnum): void {
     const tourEvent: TourEvent = {
       event: event,
       currentStep: target,
@@ -98,59 +90,55 @@ export class NgFeatureTourComponent {
   }
 
   private applyBounds(target: string): void {
-    const rect = document.getElementById(target).getBoundingClientRect();
+    const bounds = document.getElementById(target).getBoundingClientRect();
     const step = this.stepRef.nativeElement;
     const lens = this.lensRef.nativeElement;
 
-    this.renderer.setStyle(step, 'top', `${rect.bottom + 32}px`);
-    this.renderer.setStyle(step, 'left', `${rect.left}px`);
+    this.renderer.setStyle(step, 'top', `${bounds.bottom + 32}px`);
+    this.renderer.setStyle(step, 'left', `${bounds.left}px`);
+    this.renderer.setStyle(lens, 'top', `${bounds.top}px`);
+    this.renderer.setStyle(lens, 'left', `${bounds.left}px`);
+    this.renderer.setStyle(lens, 'width', `${bounds.width}px`);
+    this.renderer.setStyle(lens, 'height', `${bounds.height}px`);
+  }
 
-    this.renderer.setStyle(lens, 'top', `${rect.top}px`);
-    this.renderer.setStyle(lens, 'left', `${rect.left}px`);
-    this.renderer.setStyle(lens, 'width', `${rect.width}px`);
-    this.renderer.setStyle(lens, 'height', `${rect.height}px`);
+  private setFocus(): void {
+    this.scrollToTop(this.currentStep.target);
+    this.applyBounds(this.currentStep.target);
+  }
+
+  private changeStep(event: EventEnum): void {
+    this.currentStep = this.steps[this.currentStepIndex];
+    this.stepTrack.push(this.currentStep.target);
+    this.setFocus();
+    this.emitChangeEvent(this.currentStep.target, event);
   }
 
   start() {
     this.stepTrack = [];
     this.initialStepTarget = this.initialStepTarget || this.steps[0].target;
     this.currentStepIndex = this.getIndexFromTarget(this.initialStepTarget);
-    this.currentStep = this.steps[this.currentStepIndex];
-    this.stepTrack.push(this.currentStep.target);
-    this.scrollToTop(this.currentStep.target);
-    this.applyBounds(this.currentStep.target);
+    this.changeStep(EventEnum.Start);
   }
 
   next(): void {
     this.currentStepIndex++;
-    this.currentStep = this.steps[this.currentStepIndex];
-    this.stepTrack.push(this.currentStep.target);
-    this.scrollToTop(this.currentStep.target);
-    this.applyBounds(this.currentStep.target);
-    this.emitChageEvent(this.currentStep.target, EventEnum.Next);
+    this.changeStep(EventEnum.Next);
   }
 
   previous(): void {
     this.currentStepIndex--;
-    this.currentStep = this.steps[this.currentStepIndex];
-    this.stepTrack.push(this.currentStep.target);
-    this.scrollToTop(this.currentStep.target);
-    this.applyBounds(this.currentStep.target);
-    this.emitChageEvent(this.currentStep.target, EventEnum.Previous);
+    this.changeStep(EventEnum.Previous);
   }
 
   finish(): void {
-    this.emitChageEvent(this.currentStep.target, EventEnum.Finish);
+    this.emitChangeEvent(this.currentStep.target, EventEnum.Finish);
     this.currentStep = null;
   }
 
   abort(): void {
-    this.emitChageEvent(this.currentStep.target, EventEnum.Abort);
+    this.emitChangeEvent(this.currentStep.target, EventEnum.Abort);
     this.currentStep = null;
-  }
-
-  isCurrentStep(step: TourStep): boolean {
-    return this.currentStep && step.target === this.currentStep.target;
   }
 
   isLastStep(): boolean {
