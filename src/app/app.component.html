@@ -1,11 +1,5 @@
-<ng-feature-tour
-  #step
-  [steps]="steps"
-  (onNext)="onNext($event)"
-  (onPrevious)="onPrevious($event)"
-  (onAbort)="onAbort($event)"
-  (onFinish)="onFinish($event)"
-></ng-feature-tour>
+<ng-feature-tour #step [steps]="steps" (onChange)="onChange($event)">
+</ng-feature-tour>
 
 <main class="wrapper">
   <section>
@@ -41,7 +35,7 @@
     <ul class="events">
       <li *ngIf="events.length === 0">no events</li>
       <li *ngFor="let event of events">
-        <code>{{ event | json }}</code>
+        <pre>{{ event | json }}</pre>
       </li>
     </ul>
   </section>

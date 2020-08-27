@@ -7,7 +7,7 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { TourStep, TourEvent } from './ng-feature-tour.model';
+import { TourStep, TourEvent, EventEnum } from './ng-feature-tour.model';
 
 @Component({
   selector: 'ng-feature-tour',
@@ -37,6 +37,9 @@ export class NgFeatureTourComponent {
   onAbort: EventEmitter<TourEvent>;
 
   @Output()
+  onChange: EventEmitter<TourEvent>;
+
+  @Output()
   onFinish: EventEmitter<TourEvent>;
 
   currentStep: TourStep;
@@ -50,6 +53,7 @@ export class NgFeatureTourComponent {
     this.onPrevious = new EventEmitter<TourEvent>();
     this.onAbort = new EventEmitter<TourEvent>();
     this.onFinish = new EventEmitter<TourEvent>();
+    this.onChange = new EventEmitter<TourEvent>();
   }
 
   private scrollToTop(target: string): void {
@@ -66,6 +70,31 @@ export class NgFeatureTourComponent {
     });
 
     return index;
+  }
+
+  emitChageEvent(target: string, event: EventEnum): void {
+    const tourEvent: TourEvent = {
+      event: event,
+      currentStep: target,
+      stepTrack: [...this.stepTrack],
+    };
+
+    switch (event) {
+      case EventEnum.Next:
+        this.onNext.emit(tourEvent);
+        break;
+      case EventEnum.Previous:
+        this.onPrevious.emit(tourEvent);
+        break;
+      case EventEnum.Finish:
+        this.onFinish.emit(tourEvent);
+        break;
+      case EventEnum.Abort:
+        this.onAbort.emit(tourEvent);
+        break;
+    }
+
+    this.onChange.emit(tourEvent);
   }
 
   private applyBounds(target: string): void {
@@ -98,7 +127,7 @@ export class NgFeatureTourComponent {
     this.stepTrack.push(this.currentStep.target);
     this.scrollToTop(this.currentStep.target);
     this.applyBounds(this.currentStep.target);
-    this.onNext.emit({ event: 'NEXT', targetTrack: this.stepTrack });
+    this.emitChageEvent(this.currentStep.target, EventEnum.Next);
   }
 
   previous(): void {
@@ -107,17 +136,17 @@ export class NgFeatureTourComponent {
     this.stepTrack.push(this.currentStep.target);
     this.scrollToTop(this.currentStep.target);
     this.applyBounds(this.currentStep.target);
-    this.onPrevious.emit({ event: 'PREVIOUS', targetTrack: this.stepTrack });
+    this.emitChageEvent(this.currentStep.target, EventEnum.Previous);
   }
 
   finish(): void {
+    this.emitChageEvent(this.currentStep.target, EventEnum.Finish);
     this.currentStep = null;
-    this.onFinish.emit({ event: 'FINISH', targetTrack: this.stepTrack });
   }
 
   abort(): void {
+    this.emitChageEvent(this.currentStep.target, EventEnum.Abort);
     this.currentStep = null;
-    this.onAbort.emit({ event: 'ABORT', targetTrack: this.stepTrack });
   }
 
   isCurrentStep(step: TourStep): boolean {

@@ -36,19 +36,7 @@ export class AppComponent {
     this.events = [];
   }
 
-  onNext(event: TourStep): void {
-    this.events.push(event);
-  }
-
-  onPrevious(event: TourStep): void {
-    this.events.push(event);
-  }
-
-  onAbort(event: TourStep): void {
-    this.events.push(event);
-  }
-
-  onFinish(event: TourStep): void {
-    this.events.push(event);
+  onChange(event: TourStep): void {
+    this.events.push({ ...event });
   }
 }

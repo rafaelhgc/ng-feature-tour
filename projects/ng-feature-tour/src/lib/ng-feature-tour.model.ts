@@ -1,3 +1,10 @@
+export enum EventEnum {
+  Next = 'NEXT',
+  Previous = 'PREVIOUS',
+  Abort = 'ABORT',
+  Finish = 'FINISH',
+}
+
 export interface TourStep {
   target: string;
   title: string;
@@ -5,6 +12,7 @@ export interface TourStep {
 }
 
 export interface TourEvent {
-  event: 'PREVIOUS' | 'NEXT' | 'ABORT' | 'FINISH';
-  targetTrack: string[];
+  event: EventEnum;
+  stepTrack: string[];
+  currentStep: string;
 }
