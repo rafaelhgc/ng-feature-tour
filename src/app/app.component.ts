@@ -29,11 +29,17 @@ export class AppComponent {
       title: 'Accessible',
       description: 'this is accessible',
     },
+    {
+      target: 'event',
+      title: 'Step Tracking',
+      description:
+        "Follow step by step with EventEmitter and see the user's journey through the tour",
+    },
   ];
 
   start(): void {
-    this.child.start();
     this.events = [];
+    this.child.start();
   }
 
   onChange(event: TourStep): void {

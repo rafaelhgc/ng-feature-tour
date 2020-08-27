@@ -1,42 +1,40 @@
 <ng-feature-tour #step [steps]="steps" (onChange)="onChange($event)">
 </ng-feature-tour>
 
-<main class="wrapper">
-  <section>
-    <h1>Ng Feature Tour</h1>
-    <p>Launch new features with NgFeatureTour and show your users what's new</p>
+<section>
+  <h1>Ng Feature Tour</h1>
+  <p>Launch new features with NgFeatureTour and show your users what's new</p>
 
-    <button class="btn" (click)="start()">Start tour</button>
+  <div class="feature-list">
+    <article id="featureEasy" class="feature">
+      <img src="/assets/img/easy.png" alt="" />
+      <h4>Easy</h4>
+    </article>
 
-    <div class="feature-list">
-      <article id="featureEasy" class="feature">
-        <img src="/assets/img/easy.png" alt="" />
-        <h4>Easy</h4>
-      </article>
+    <article id="featureCustomizable" class="feature">
+      <img src="/assets/img/customizable.png" alt="" />
+      <h4>Customizable</h4>
+    </article>
 
-      <article id="featureCustomizable" class="feature">
-        <img src="/assets/img/customizable.png" alt="" />
-        <h4>Customizable</h4>
-      </article>
+    <article id="featureAccessible" class="feature">
+      <img src="/assets/img/accessible.png" alt="" />
+      <h4>Accessible</h4>
+    </article>
+  </div>
 
-      <article id="featureAccessible" class="feature">
-        <img src="/assets/img/accessible.png" alt="" />
-        <h4>Accessible</h4>
-      </article>
-    </div>
-  </section>
+  <button class="btn" (click)="start()">Start tour</button>
+</section>
 
-  <section>
-    <h2>Events</h2>
-    <p>
-      Follow step by step with EventEmitter and see the user's journey through
-      the tour
-    </p>
-    <ul class="events">
-      <li *ngIf="events.length === 0">no events</li>
-      <li *ngFor="let event of events">
-        <pre>{{ event | json }}</pre>
-      </li>
-    </ul>
-  </section>
-</main>
+<section>
+  <h2>Events</h2>
+  <p>
+    Follow step by step with EventEmitter and see the user's journey through the
+    tour
+  </p>
+  <ul class="events" id="event">
+    <li *ngIf="events.length === 0">no events</li>
+    <li *ngFor="let event of events">
+      <pre>{{ event | json }}</pre>
+    </li>
+  </ul>
+</section>
