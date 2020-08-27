@@ -5,19 +5,35 @@
   border-radius: 4px;
   background-color: #ffffff;
   color: #444444;
+  transition: transform 0.3s linear;
 }
 
 .ng-feature-tour-step::before {
   content: "";
   position: absolute;
-  border-style: solid;
-  border-width: 0 16px 16px;
+  border: 16px solid #ffffff;
+  border-left-color: transparent;
+  border-right-color: transparent;
   height: 0;
   width: 0;
+}
 
-  border-color: transparent transparent #ffffff;
-  top: -16px;
+.ng-feature-tour-step.to-top::before {
+  bottom: -31px;
+  border-bottom-color: transparent;
+}
+
+.ng-feature-tour-step.to-bottom::before {
+  top: -31px;
+  border-top-color: transparent;
+}
+
+.ng-feature-tour-step.to-left::before {
   left: 16px;
+}
+
+.ng-feature-tour-step.to-right::before {
+  right: 16px;
 }
 
 .ng-feature-tour-step-bullet.is-current {
@@ -53,7 +69,6 @@
 .ng-feature-tour-lens {
   position: fixed;
   z-index: 9990;
-
   box-shadow: 0 0 0 1000em rgba(0, 0, 0, 0.75);
 }
 

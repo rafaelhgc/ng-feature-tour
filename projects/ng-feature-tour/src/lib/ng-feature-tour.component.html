@@ -8,8 +8,8 @@
 
     <div class="ng-feature-tour-step-bullet-list">
       <span
-        *ngFor="let step of steps; let i = index"
-        [class.is-current]="currentStepIndex === i"
+        *ngFor="let step of steps"
+        [class.is-current]="currentStep?.target === step.target"
         class="ng-feature-tour-step-bullet"
       ></span>
     </div>
