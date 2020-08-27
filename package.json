@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:ng-feature-tour": "ng build ng-feature-tour --watch",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

@@ -27,13 +27,8 @@ export class AppComponent {
     {
       target: 'featureAccessible',
       title: 'Accessible',
-      description: 'this is accessible',
-    },
-    {
-      target: 'event',
-      title: 'Step Tracking',
       description:
-        "Follow step by step with EventEmitter and see the user's journey through the tour",
+        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni cum consectetur dolores incidunt sed! Blanditiis consequuntur beatae laboriosam magni facilis cum minus quas? Nisi asperiores ratione quaerat, molestiae harum velit.',
     },
   ];
 
