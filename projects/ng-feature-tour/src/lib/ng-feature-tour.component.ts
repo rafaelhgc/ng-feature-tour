@@ -4,19 +4,21 @@ import {
   Input,
   ViewChild,
   ElementRef,
+  OnInit,
 } from '@angular/core';
 
-import { StepBounds, LensBounds } from './ng-feature-tour.model';
+import { NgTourLensBounds } from './models/ng-feature-tour-lens-bounds.model';
+import { NgTourStepBounds } from './models/ng-feature-tour-step-bounds.model';
 import { NgTourStep } from './models/ng-feature-tour-step.model';
 import { NgTourEventEnum } from './models/ng-feature-tour-event.model';
-import { NgFeatureTourService } from './services/ng-feature-tour.service';
+import { NgTourEventService } from './services/ng-feature-tour-event.service';
 
 @Component({
   selector: 'ng-feature-tour',
   templateUrl: './ng-feature-tour.component.html',
   styleUrls: ['./ng-feature-tour.component.scss'],
 })
-export class NgFeatureTourComponent {
+export class NgFeatureTourComponent implements OnInit {
   @ViewChild('step')
   stepRef: ElementRef;
 
@@ -32,9 +34,13 @@ export class NgFeatureTourComponent {
   currentStep: NgTourStep;
 
   constructor(
-    private featureTourService: NgFeatureTourService,
+    private ngTourEventService: NgTourEventService,
     private renderer: Renderer2
   ) {}
+
+  ngOnInit(): void {
+    this.ngTourEventService.initialize.subscribe(() => this.start());
+  }
 
   private scrollToTop({ target }: NgTourStep): void {
     window.scrollTo(0, document.getElementById(target).offsetTop - 16);
@@ -55,10 +61,10 @@ export class NgFeatureTourComponent {
   }
 
   private emitChangeEvent(step: NgTourStep, event: NgTourEventEnum): void {
-    this.featureTourService.onChange.emit({ event: event, step: step });
+    this.ngTourEventService.onChange.emit({ event: event, step: step });
   }
 
-  private getStepBounds(targetRect: DOMRect): StepBounds {
+  private getStepBounds(targetRect: DOMRect): NgTourStepBounds {
     const { availHeight, availWidth } = screen;
     const margin = 32;
     const maxWidth = availHeight / 2;
@@ -104,7 +110,7 @@ export class NgFeatureTourComponent {
     this.renderer.addClass(step, xPosition);
   }
 
-  private getLensBounds({ y, x, width, height }: DOMRect): LensBounds {
+  private getLensBounds({ y, x, width, height }: DOMRect): NgTourLensBounds {
     return { y, x, width, height };
   }
 
