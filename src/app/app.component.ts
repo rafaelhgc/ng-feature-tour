@@ -1,19 +1,14 @@
-import { Component, ViewChild } from '@angular/core';
-import { NgFeatureTourComponent, TourStep } from 'ng-feature-tour';
+import { Component, OnInit } from '@angular/core';
+import { NgTourStep, NgTourEventService, NgTourEvent } from 'ng-feature-tour';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
 })
-export class AppComponent {
-  @ViewChild('step')
-  child: NgFeatureTourComponent;
-
+export class AppComponent implements OnInit {
   title = 'ng-feature-tour-app';
 
-  events: any = [];
-
-  steps: TourStep[] = [
+  steps: NgTourStep[] = [
     {
       target: 'featureEasy',
       title: 'Easy',
@@ -32,12 +27,15 @@ export class AppComponent {
     },
   ];
 
-  start(): void {
-    this.events = [];
-    this.child.start();
+  constructor(private ngFeatureTourService: NgTourEventService) {}
+
+  ngOnInit(): void {
+    this.ngFeatureTourService.onChange.subscribe((event: NgTourEvent) =>
+      console.log(event)
+    );
   }
 
-  onChange(event: TourStep): void {
-    this.events.push({ ...event });
+  start(): void {
+    this.ngFeatureTourService.initialize.emit();
   }
 }
