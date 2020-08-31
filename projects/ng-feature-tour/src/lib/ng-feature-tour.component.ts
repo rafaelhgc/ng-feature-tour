@@ -4,16 +4,12 @@ import {
   Input,
   ViewChild,
   ElementRef,
-  Output,
-  EventEmitter,
 } from '@angular/core';
-import {
-  TourStep,
-  TourEvent,
-  EventEnum,
-  StepBounds,
-  LensBounds,
-} from './ng-feature-tour.model';
+
+import { StepBounds, LensBounds } from './ng-feature-tour.model';
+import { NgTourStep } from './models/ng-feature-tour-step.model';
+import { NgTourEventEnum } from './models/ng-feature-tour-event.model';
+import { NgFeatureTourService } from './services/ng-feature-tour.service';
 
 @Component({
   selector: 'ng-feature-tour',
@@ -28,48 +24,27 @@ export class NgFeatureTourComponent {
   lensRef: ElementRef;
 
   @Input()
-  steps: TourStep[];
+  steps: NgTourStep[];
 
   @Input()
   initialStepTarget: string;
 
-  @Output()
-  onNext: EventEmitter<TourEvent>;
+  currentStep: NgTourStep;
 
-  @Output()
-  onPrevious: EventEmitter<TourEvent>;
+  constructor(
+    private featureTourService: NgFeatureTourService,
+    private renderer: Renderer2
+  ) {}
 
-  @Output()
-  onAbort: EventEmitter<TourEvent>;
-
-  @Output()
-  onChange: EventEmitter<TourEvent>;
-
-  @Output()
-  onFinish: EventEmitter<TourEvent>;
-
-  currentStep: TourStep;
-
-  stepTrack: string[];
-
-  constructor(private renderer: Renderer2) {
-    this.onNext = new EventEmitter<TourEvent>();
-    this.onPrevious = new EventEmitter<TourEvent>();
-    this.onAbort = new EventEmitter<TourEvent>();
-    this.onFinish = new EventEmitter<TourEvent>();
-    this.onChange = new EventEmitter<TourEvent>();
-    this.stepTrack = [];
-  }
-
-  private scrollToTop({ target }: TourStep): void {
+  private scrollToTop({ target }: NgTourStep): void {
     window.scrollTo(0, document.getElementById(target).offsetTop - 16);
   }
 
-  private getStepByTarget(target: string): TourStep {
+  private getStepByTarget(target: string): NgTourStep {
     return this.steps.filter((step) => step.target === target).pop();
   }
 
-  private getIndexFromStep(search?: TourStep): number {
+  private getIndexFromStep(search?: NgTourStep): number {
     const step = search || this.currentStep;
 
     if (!step) {
@@ -79,29 +54,8 @@ export class NgFeatureTourComponent {
     return this.steps.map(({ target }) => target).indexOf(step.target);
   }
 
-  private emitChangeEvent(target: string, event: EventEnum): void {
-    const tourEvent: TourEvent = {
-      event: event,
-      currentStep: target,
-      stepTrack: [...this.stepTrack],
-    };
-
-    switch (event) {
-      case EventEnum.Next:
-        this.onNext.emit(tourEvent);
-        break;
-      case EventEnum.Previous:
-        this.onPrevious.emit(tourEvent);
-        break;
-      case EventEnum.Finish:
-        this.onFinish.emit(tourEvent);
-        break;
-      case EventEnum.Abort:
-        this.onAbort.emit(tourEvent);
-        break;
-    }
-
-    this.onChange.emit(tourEvent);
+  private emitChangeEvent(step: NgTourStep, event: NgTourEventEnum): void {
+    this.featureTourService.onChange.emit({ event: event, step: step });
   }
 
   private getStepBounds(targetRect: DOMRect): StepBounds {
@@ -163,7 +117,7 @@ export class NgFeatureTourComponent {
     this.renderer.setStyle(lens, 'height', `${height}px`);
   }
 
-  private applyBounds({ target }: TourStep): void {
+  private applyBounds({ target }: NgTourStep): void {
     const targetRect = document.getElementById(target).getBoundingClientRect();
 
     this.applyStepBounds(targetRect);
@@ -178,15 +132,14 @@ export class NgFeatureTourComponent {
     }, 0);
   }
 
-  private changeStep(event: EventEnum, step?: TourStep): void {
+  private changeStep(event: NgTourEventEnum, step?: NgTourStep): void {
     this.currentStep = step;
-    this.stepTrack.push(step.target);
-    this.emitChangeEvent(this.currentStep.target, event);
+    this.emitChangeEvent(this.currentStep, event);
     this.setFocus();
   }
 
   start() {
-    let initialStep: TourStep;
+    let initialStep: NgTourStep;
 
     if (this.initialStepTarget) {
       initialStep = this.getStepByTarget(this.initialStepTarget);
@@ -194,33 +147,31 @@ export class NgFeatureTourComponent {
       initialStep = this.steps[0];
     }
 
-    this.changeStep(EventEnum.Start, initialStep);
+    this.changeStep(NgTourEventEnum.Start, initialStep);
   }
 
   next(): void {
     const stepIndex = this.getIndexFromStep();
     const nextStep = this.steps[stepIndex + 1];
 
-    this.changeStep(EventEnum.Next, nextStep);
+    this.changeStep(NgTourEventEnum.Next, nextStep);
   }
 
   previous(): void {
     const stepIndex = this.getIndexFromStep();
     const previousStep = this.steps[stepIndex - 1];
 
-    this.changeStep(EventEnum.Previous, previousStep);
+    this.changeStep(NgTourEventEnum.Previous, previousStep);
   }
 
   finish(): void {
-    this.emitChangeEvent(this.currentStep.target, EventEnum.Finish);
+    this.emitChangeEvent(this.currentStep, NgTourEventEnum.Finish);
     this.currentStep = null;
-    this.stepTrack = [];
   }
 
   abort(): void {
-    this.emitChangeEvent(this.currentStep.target, EventEnum.Abort);
+    this.emitChangeEvent(this.currentStep, NgTourEventEnum.Abort);
     this.currentStep = null;
-    this.stepTrack = [];
   }
 
   isLastStep(): boolean {
