@@ -5,7 +5,7 @@
   border-radius: 4px;
   background-color: #ffffff;
   color: #444444;
-  transition: transform 0.3s linear;
+  transition: left 0.3s linear, top 0.3s linear, width 0.3s linear;
 }
 
 .ng-feature-tour-step::before {
@@ -70,6 +70,8 @@
   position: fixed;
   z-index: 9990;
   box-shadow: 0 0 0 1000em rgba(0, 0, 0, 0.75);
+  transition: left 0.3s linear, top 0.3s linear, width 0.3s linear,
+    height 0.3s linear;
 }
 
 .ng-feature-tour-step-controls {

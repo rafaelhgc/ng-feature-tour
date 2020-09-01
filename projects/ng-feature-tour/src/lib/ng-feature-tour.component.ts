@@ -1,17 +1,13 @@
-import {
-  Component,
-  Renderer2,
-  Input,
-  ViewChild,
-  ElementRef,
-  OnInit,
-} from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, OnInit } from '@angular/core';
 
-import { NgTourLensBounds } from './models/ng-feature-tour-lens-bounds.model';
-import { NgTourStepBounds } from './models/ng-feature-tour-step-bounds.model';
+import { NgTourEventService } from './services/ng-feature-tour-event.service';
 import { NgTourStep } from './models/ng-feature-tour-step.model';
 import { NgTourEventEnum } from './models/ng-feature-tour-event.model';
-import { NgTourEventService } from './services/ng-feature-tour-event.service';
+import {
+  LensBounds,
+  StepBounds,
+  TourBounds,
+} from './models/ng-feature-tour-bounds.model';
 
 @Component({
   selector: 'ng-feature-tour',
@@ -33,10 +29,9 @@ export class NgFeatureTourComponent implements OnInit {
 
   currentStep: NgTourStep;
 
-  constructor(
-    private ngTourEventService: NgTourEventService,
-    private renderer: Renderer2
-  ) {}
+  bounds: TourBounds;
+
+  constructor(private ngTourEventService: NgTourEventService) {}
 
   ngOnInit(): void {
     this.ngTourEventService.initialize.subscribe(() => this.start());
@@ -64,78 +59,59 @@ export class NgFeatureTourComponent implements OnInit {
     this.ngTourEventService.onChange.emit({ event: event, step: step });
   }
 
-  private getStepBounds(targetRect: DOMRect): NgTourStepBounds {
-    const { availHeight, availWidth } = screen;
+  private getStepBounds(target: DOMRect): StepBounds {
     const margin = 32;
-    const maxWidth = availHeight / 2;
     const stepRect = this.stepRef.nativeElement.getBoundingClientRect();
 
-    let y: number;
-    let x: number;
-    let yPosition: 'to-bottom' | 'to-top';
-    let xPosition: 'to-left' | 'to-right';
+    let left: number;
+    let top: number;
+    let modifierClasses: string[] = [];
 
     // axis y
-    if (targetRect.y > availHeight - (targetRect.y + targetRect.height)) {
-      yPosition = 'to-top';
-      y = targetRect.y - stepRect.height - margin;
+    if (target.y > screen.availHeight - (target.y + target.height)) {
+      modifierClasses.push('to-top');
+      top = target.y - stepRect.height - margin;
     } else {
-      yPosition = 'to-bottom';
-      y = targetRect.y + targetRect.height + margin;
+      modifierClasses.push('to-bottom');
+      top = target.y + target.height + margin;
     }
 
     // axis x
-    if (targetRect.x > availWidth / 2) {
-      xPosition = 'to-right';
-      x = targetRect.x + targetRect.width - stepRect.width;
+    if (target.x > screen.availWidth / 2) {
+      modifierClasses.push('to-right');
+      left = target.x + target.width - stepRect.width;
     } else {
-      xPosition = 'to-left';
-      x = targetRect.x;
+      modifierClasses.push('to-left');
+      left = target.x;
     }
 
-    return { yPosition, xPosition, y, x, maxWidth };
+    return {
+      left,
+      top,
+      maxWidth: screen.availWidth / 4,
+      modifierClasses: modifierClasses.join(' '),
+    };
   }
 
-  private applyStepBounds(rect: DOMRect): void {
-    const { x, y, maxWidth, yPosition, xPosition } = this.getStepBounds(rect);
-    const step = this.stepRef.nativeElement;
+  private getLensBounds(target: DOMRect): LensBounds {
+    const { y, x, width, height } = target;
 
-    this.renderer.setStyle(step, 'transform', `translate(${x}px, ${y}px)`);
-    this.renderer.setStyle(step, 'max-width', `${maxWidth}px`);
-    this.renderer.removeClass(step, 'to-top');
-    this.renderer.removeClass(step, 'to-left');
-    this.renderer.removeClass(step, 'to-right');
-    this.renderer.removeClass(step, 'to-bottom');
-    this.renderer.addClass(step, yPosition);
-    this.renderer.addClass(step, xPosition);
+    return { top: y, left: x, width, height };
   }
 
-  private getLensBounds({ y, x, width, height }: DOMRect): NgTourLensBounds {
-    return { y, x, width, height };
-  }
+  private applyBounds(): void {
+    const targetRect = document
+      .getElementById(this.currentStep.target)
+      .getBoundingClientRect();
+    const step = this.getStepBounds(targetRect);
+    const lens = this.getLensBounds(targetRect);
 
-  private applyLensBounds(rect: DOMRect): void {
-    const { x, y, width, height } = this.getLensBounds(rect);
-    const lens = this.lensRef.nativeElement;
-
-    this.renderer.setStyle(lens, 'transform', `translate(${x}px, ${y}px)`);
-    this.renderer.setStyle(lens, 'width', `${width}px`);
-    this.renderer.setStyle(lens, 'height', `${height}px`);
-  }
-
-  private applyBounds({ target }: NgTourStep): void {
-    const targetRect = document.getElementById(target).getBoundingClientRect();
-
-    this.applyStepBounds(targetRect);
-    this.applyLensBounds(targetRect);
+    this.bounds = { step, lens };
   }
 
   private setFocus(): void {
     this.scrollToTop(this.currentStep);
-
-    setTimeout(() => {
-      this.applyBounds(this.currentStep);
-    }, 0);
+    setTimeout(() => this.applyBounds(), 0);
   }
 
   private changeStep(event: NgTourEventEnum, step?: NgTourStep): void {

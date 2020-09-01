@@ -1,5 +1,11 @@
 <div [hidden]="!currentStep">
-  <div #step class="ng-feature-tour-step">
+  <div
+    #step
+    class="ng-feature-tour-step {{ bounds?.step.modifierClasses }}"
+    [style.left.px]="bounds?.step.left"
+    [style.top.px]="bounds?.step.top"
+    [style.maxWidth.px]="bounds?.step.maxWidth"
+  >
     <h1 class="ng-feature-tour-step-title">{{ currentStep?.title }}</h1>
 
     <p class="ng-feature-tour-step-description">
@@ -25,6 +31,13 @@
     </nav>
   </div>
 
-  <div #lens class="ng-feature-tour-lens"></div>
+  <div
+    #lens
+    class="ng-feature-tour-lens"
+    [style.left.px]="bounds?.lens.left"
+    [style.top.px]="bounds?.lens.top"
+    [style.width.px]="bounds?.lens.width"
+    [style.height.px]="bounds?.lens.height"
+  ></div>
   <div class="ng-feature-tour-overlay"></div>
 </div>
