@@ -16,6 +16,11 @@
       {{ currentStep?.description }}
     </p>
 
+    <div hidden>
+      Tour composto por {{ config?.steps.length }} passos. Você está no passo
+      {{ currentStepIndex() }} de {{ config?.steps.length }}
+    </div>
+
     <div class="ng-feature-tour-step-bullet-list">
       <span
         *ngFor="let step of config?.steps"

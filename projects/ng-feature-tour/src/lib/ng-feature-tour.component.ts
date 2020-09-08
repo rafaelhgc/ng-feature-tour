@@ -167,7 +167,7 @@ export class NgFeatureTourComponent implements OnInit {
     this.currentStep = null;
   }
 
-  escape() :void {
+  escape(): void {
     this.emitChangeEvent(this.currentStep, NgTourEventEnum.Escape);
     this.currentStep = null;
   }
@@ -189,5 +189,9 @@ export class NgFeatureTourComponent implements OnInit {
     const currentStepIndex = this.getIndexFromStep();
 
     return currentStepIndex === 0;
+  }
+
+  currentStepIndex(): number {
+    return this.getIndexFromStep() + 1;
   }
 }
