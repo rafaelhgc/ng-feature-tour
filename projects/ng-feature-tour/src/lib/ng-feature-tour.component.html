@@ -25,12 +25,21 @@
     </div>
 
     <nav class="ng-feature-tour-step-controls">
-      <button (click)="abort()">I got it</button>
-
+      <div class="ng-feature-tour-step-abort">
+        <button *ngIf="!isLastStep()" (click)="abort()" tabindex="0">
+          I got it
+        </button>
+      </div>
       <div class="ng-feature-tour-step-navigation">
-        <button *ngIf="!isFirstStep()" (click)="previous()">Previous</button>
-        <button *ngIf="!isLastStep()" (click)="next()">Next</button>
-        <button *ngIf="isLastStep()" (click)="finish()">Finish</button>
+        <button *ngIf="!isFirstStep()" (click)="previous()" tabindex="0">
+          Previous
+        </button>
+        <button *ngIf="!isLastStep()" (click)="next()" tabindex="0">
+          Next
+        </button>
+        <button *ngIf="isLastStep()" (click)="finish()" tabindex="0">
+          Finish
+        </button>
       </div>
     </nav>
   </div>
