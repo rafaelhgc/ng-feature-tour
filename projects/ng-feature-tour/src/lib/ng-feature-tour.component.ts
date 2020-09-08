@@ -1,4 +1,10 @@
-import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  ElementRef,
+  OnInit,
+  HostListener,
+} from '@angular/core';
 
 import { NgTourEventService } from './services/ng-feature-tour-event.service';
 import { NgTourStep } from './models/ng-feature-tour-step.model';
@@ -16,6 +22,12 @@ import { NgTourConfig } from './models/ng-feature-tour-config.model';
   styleUrls: ['./ng-feature-tour.component.scss'],
 })
 export class NgFeatureTourComponent implements OnInit {
+  @HostListener('document:keydown.escape', ['$event'])
+  onKeydownHandler(event: KeyboardEvent) {
+    event.preventDefault();
+    this.escape();
+  }
+
   @ViewChild('step')
   stepRef: ElementRef;
 
@@ -61,7 +73,6 @@ export class NgFeatureTourComponent implements OnInit {
     let left: number;
     let top: number;
     let modifierClasses: string[] = [];
-    let maxWidth = screen.availWidth / 4;
 
     // axis y
     if (target.y > screen.availHeight - (target.y + target.height)) {
@@ -153,6 +164,11 @@ export class NgFeatureTourComponent implements OnInit {
 
   finish(): void {
     this.emitChangeEvent(this.currentStep, NgTourEventEnum.Finish);
+    this.currentStep = null;
+  }
+
+  escape() :void {
+    this.emitChangeEvent(this.currentStep, NgTourEventEnum.Escape);
     this.currentStep = null;
   }
 

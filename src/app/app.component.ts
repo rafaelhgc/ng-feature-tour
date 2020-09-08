@@ -41,7 +41,6 @@ export class AppComponent implements OnInit {
           'Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni cum consectetur dolores incidunt sed! Blanditiis consequuntur beatae laboriosam magni facilis cum minus quas? Nisi asperiores ratione quaerat, molestiae harum velit.',
       },
     ],
-    lastTarget: 'featureAccessible'
   };
 
   constructor(private ngFeatureTourService: NgTourEventService) {}

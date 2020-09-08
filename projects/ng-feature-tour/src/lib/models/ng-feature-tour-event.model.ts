@@ -6,6 +6,7 @@ export enum NgTourEventEnum {
   Previous = 'PREVIOUS',
   Abort = 'ABORT',
   Finish = 'FINISH',
+  Escape = 'ESCAPE',
 }
 
 export interface NgTourEvent {
