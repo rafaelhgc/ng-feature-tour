@@ -1,12 +1,16 @@
-<div [hidden]="!currentStep">
+<div [hidden]="!currentStep" cdkTrapFocus>
   <div
     #step
+    aria-modal="true"
+    role="dialog"
     class="ng-feature-tour-step {{ bounds?.step.modifierClasses }}"
     [style.left.px]="bounds?.step.left"
     [style.top.px]="bounds?.step.top"
     [style.maxWidth.px]="bounds?.step.maxWidth"
   >
-    <h1 class="ng-feature-tour-step-title">{{ currentStep?.title }}</h1>
+    <h2 class="ng-feature-tour-step-title" tabindex="0">
+      {{ currentStep?.title }}
+    </h2>
 
     <p class="ng-feature-tour-step-description">
       {{ currentStep?.description }}

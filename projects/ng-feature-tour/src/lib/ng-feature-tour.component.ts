@@ -111,7 +111,10 @@ export class NgFeatureTourComponent implements OnInit {
 
   private setFocus(): void {
     this.scrollToTop(this.currentStep);
-    setTimeout(() => this.applyBounds(), 0);
+    setTimeout(() => {
+      this.applyBounds();
+      this.stepRef.nativeElement.children.item(0).focus();
+    }, 0);
   }
 
   private changeStep(event: NgTourEventEnum, step?: NgTourStep): void {
