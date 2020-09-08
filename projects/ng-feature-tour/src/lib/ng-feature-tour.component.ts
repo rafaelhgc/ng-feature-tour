@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 
 import { NgTourEventService } from './services/ng-feature-tour-event.service';
 import { NgTourStep } from './models/ng-feature-tour-step.model';
@@ -8,6 +8,7 @@ import {
   StepBounds,
   TourBounds,
 } from './models/ng-feature-tour-bounds.model';
+import { NgTourConfig } from './models/ng-feature-tour-config.model';
 
 @Component({
   selector: 'ng-feature-tour',
@@ -21,11 +22,9 @@ export class NgFeatureTourComponent implements OnInit {
   @ViewChild('lens')
   lensRef: ElementRef;
 
-  @Input()
-  steps: NgTourStep[];
+  initialStep: NgTourStep;
 
-  @Input()
-  initialStepTarget: string;
+  config: NgTourConfig;
 
   currentStep: NgTourStep;
 
@@ -33,16 +32,12 @@ export class NgFeatureTourComponent implements OnInit {
 
   constructor(private ngTourEventService: NgTourEventService) {}
 
-  ngOnInit(): void {
-    this.ngTourEventService.initialize.subscribe(() => this.start());
-  }
-
   private scrollToTop({ target }: NgTourStep): void {
     window.scrollTo(0, document.getElementById(target).offsetTop - 16);
   }
 
   private getStepByTarget(target: string): NgTourStep {
-    return this.steps.filter((step) => step.target === target).pop();
+    return this.config.steps.filter((step) => step.target === target).pop();
   }
 
   private getIndexFromStep(search?: NgTourStep): number {
@@ -52,7 +47,7 @@ export class NgFeatureTourComponent implements OnInit {
       return -1;
     }
 
-    return this.steps.map(({ target }) => target).indexOf(step.target);
+    return this.config.steps.map(({ target }) => target).indexOf(step.target);
   }
 
   private emitChangeEvent(step: NgTourStep, event: NgTourEventEnum): void {
@@ -66,6 +61,7 @@ export class NgFeatureTourComponent implements OnInit {
     let left: number;
     let top: number;
     let modifierClasses: string[] = [];
+    let maxWidth = screen.availWidth / 4;
 
     // axis y
     if (target.y > screen.availHeight - (target.y + target.height)) {
@@ -88,7 +84,6 @@ export class NgFeatureTourComponent implements OnInit {
     return {
       left,
       top,
-      maxWidth: screen.availWidth / 4,
       modifierClasses: modifierClasses.join(' '),
     };
   }
@@ -123,13 +118,20 @@ export class NgFeatureTourComponent implements OnInit {
     this.setFocus();
   }
 
+  ngOnInit(): void {
+    this.ngTourEventService.initialize.subscribe((config: NgTourConfig) => {
+      this.config = config;
+      this.start();
+    });
+  }
+
   start() {
     let initialStep: NgTourStep;
 
-    if (this.initialStepTarget) {
-      initialStep = this.getStepByTarget(this.initialStepTarget);
+    if (!this.config.lastTarget) {
+      initialStep = this.config.steps[0];
     } else {
-      initialStep = this.steps[0];
+      initialStep = this.getStepByTarget(this.config.lastTarget);
     }
 
     this.changeStep(NgTourEventEnum.Start, initialStep);
@@ -137,14 +139,14 @@ export class NgFeatureTourComponent implements OnInit {
 
   next(): void {
     const stepIndex = this.getIndexFromStep();
-    const nextStep = this.steps[stepIndex + 1];
+    const nextStep = this.config.steps[stepIndex + 1];
 
     this.changeStep(NgTourEventEnum.Next, nextStep);
   }
 
   previous(): void {
     const stepIndex = this.getIndexFromStep();
-    const previousStep = this.steps[stepIndex - 1];
+    const previousStep = this.config.steps[stepIndex - 1];
 
     this.changeStep(NgTourEventEnum.Previous, previousStep);
   }
@@ -162,7 +164,9 @@ export class NgFeatureTourComponent implements OnInit {
   isLastStep(): boolean {
     const currentStepIndex = this.getIndexFromStep();
 
-    return this.currentStep && currentStepIndex === this.steps.length - 1;
+    return (
+      this.currentStep && currentStepIndex === this.config.steps.length - 1
+    );
   }
 
   isFirstStep(): boolean {

@@ -1,4 +1,6 @@
 .ng-feature-tour-step {
+  max-width: 320px;
+  min-width: 320px;
   position: fixed;
   z-index: 9999;
   padding: 16px;
@@ -42,12 +44,12 @@
 
 .ng-feature-tour-step-title {
   margin: 0 0 16px 0;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .ng-feature-tour-step-description {
   margin: 0 0 16px 0;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.4;
 }
 
@@ -81,9 +83,9 @@
 
 .ng-feature-tour-step-controls button {
   appearance: none;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
-  padding: 8px 16px;
+  padding: 8px 12px;
   border-radius: 4px;
   border: 2px solid #2980b9;
   color: #2980b9;

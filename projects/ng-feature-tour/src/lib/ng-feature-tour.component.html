@@ -18,7 +18,7 @@
 
     <div class="ng-feature-tour-step-bullet-list">
       <span
-        *ngFor="let step of steps"
+        *ngFor="let step of config?.steps"
         [class.is-current]="currentStep?.target === step.target"
         class="ng-feature-tour-step-bullet"
       ></span>
@@ -27,18 +27,18 @@
     <nav class="ng-feature-tour-step-controls">
       <div class="ng-feature-tour-step-abort">
         <button *ngIf="!isLastStep()" (click)="abort()" tabindex="0">
-          I got it
+          {{ config?.controls.abort.label }}
         </button>
       </div>
       <div class="ng-feature-tour-step-navigation">
         <button *ngIf="!isFirstStep()" (click)="previous()" tabindex="0">
-          Previous
+          {{ config?.controls.previous.label }}
         </button>
         <button *ngIf="!isLastStep()" (click)="next()" tabindex="0">
-          Next
+          {{ config?.controls.next.label }}
         </button>
         <button *ngIf="isLastStep()" (click)="finish()" tabindex="0">
-          Finish
+          {{ config?.controls.done.label }}
         </button>
       </div>
     </nav>

@@ -8,7 +8,6 @@ export interface LensBounds {
 export interface StepBounds {
   left: number;
   top: number;
-  maxWidth: number;
   modifierClasses: string;
 }
 
