@@ -1,4 +1,4 @@
-<div class="ft-wrapper" [hidden]="!enabled" (click)="escape()">
+<div class="ft-wrapper" [hidden]="!enabled">
   <div *ngFor="let step of steps; let index = index" [hidden]="!step.enabled">
     <div
       class="ft-lens"
@@ -30,30 +30,26 @@
       </div>
       <div class="ft-step-controls">
         <div class="ft-step-abort">
-          <button
-            *ngIf="!isLastStep(index)"
-            (click)="abort(index)"
-            tabindex="0"
-          >
+          <button *ngIf="!isLastStep(index)" (click)="abort(step)" tabindex="0">
             abort
           </button>
         </div>
         <div class="ft-step-navigation">
           <button
             *ngIf="!isFirstStep(index)"
-            (click)="previous(index)"
+            (click)="previous(step, index)"
             tabindex="0"
           >
             previous
           </button>
-          <button *ngIf="!isLastStep(index)" (click)="next(index)" tabindex="0">
-            next
-          </button>
           <button
-            *ngIf="isLastStep(index)"
-            (click)="finish(index)"
+            *ngIf="!isLastStep(index)"
+            (click)="next(step, index)"
             tabindex="0"
           >
+            next
+          </button>
+          <button *ngIf="isLastStep(index)" (click)="finish(step)" tabindex="0">
             done
           </button>
         </div>

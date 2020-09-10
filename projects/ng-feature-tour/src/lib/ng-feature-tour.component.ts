@@ -13,18 +13,25 @@ import { FeatureTourService } from './ng-feature-tour.service';
   styleUrls: ['./ng-feature-tour.component.scss'],
 })
 export class NgFeatureTourComponent implements OnInit {
-  @HostListener('document:keydown.escape', ['$event'])
-  onEscapeHandler(event: KeyboardEvent) {
-    event.preventDefault();
-    this.escape();
-  }
-
   @Input()
   steps: FeatureTourStep[];
 
   enabled: boolean;
 
   constructor(private ngTourEventService: FeatureTourService) {}
+
+  private disableStep(step: FeatureTourStep): void {
+    step.enabled = false;
+    step.visible = false;
+  }
+
+  private disableTour(
+    step: FeatureTourStep,
+    event: FeatureTourEventEnum
+  ): void {
+    this.enabled = false;
+    this.emitChangeEvent(step, event);
+  }
 
   private scrollToTop(step: FeatureTourStep): void {
     window.scrollTo(0, document.getElementById(step.target).offsetTop - 16);
@@ -121,25 +128,27 @@ export class NgFeatureTourComponent implements OnInit {
     });
   }
 
-  next(stepIndex: number): void {
-    const currentStep = this.steps[stepIndex];
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapeHandler(event?: KeyboardEvent) {
+    if (!this.steps) {
+      return;
+    }
 
-    currentStep.enabled = false;
-    this.setFocus(this.steps[stepIndex + 1]);
+    const currentStep = this.steps.filter(({ enabled }) => enabled).shift();
+
+    if (!currentStep) {
+      return;
+    }
+
+    this.close(currentStep);
+    this.emitChangeEvent(currentStep, FeatureTourEventEnum.Escape);
   }
 
-  previous(stepIndex: number): void {
-    const currentStep = this.steps[stepIndex];
-
-    currentStep.enabled = false;
-    this.setFocus(this.steps[stepIndex - 1]);
+  close(step: FeatureTourStep): void {
+    step.enabled = false;
+    step.visible = false;
+    this.enabled = false;
   }
-
-  finish(): void {}
-
-  escape(): void {}
-
-  abort(): void {}
 
   isLastStep(stepIndex: number): boolean {
     return stepIndex === this.steps.length - 1;
@@ -160,5 +169,31 @@ export class NgFeatureTourComponent implements OnInit {
     return `Tour composto por ${count} passos.
             Você está no passo ${current}. ${step.title}.
             ${step.description}`;
+  }
+
+  previous(currentStep: FeatureTourStep, currentStepIndex: number): void {
+    const step = this.steps[currentStepIndex - 1];
+
+    this.disableStep(currentStep);
+    this.setFocus(step);
+    this.emitChangeEvent(step, FeatureTourEventEnum.Previous);
+  }
+
+  next(currentStep: FeatureTourStep, currentStepIndex: number): void {
+    const step = this.steps[currentStepIndex + 1];
+
+    this.disableStep(currentStep);
+    this.setFocus(step);
+    this.emitChangeEvent(step, FeatureTourEventEnum.Next);
+  }
+
+  finish(currentStep: FeatureTourStep): void {
+    this.disableStep(currentStep);
+    this.disableTour(currentStep, FeatureTourEventEnum.Finish);
+  }
+
+  abort(currentStep: FeatureTourStep): void {
+    this.disableStep(currentStep);
+    this.disableTour(currentStep, FeatureTourEventEnum.Abort);
   }
 }
