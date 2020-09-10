@@ -40,3 +40,22 @@ export interface FeatureTourStepBounds {
     height: number;
   };
 }
+
+export interface FeatureTourSetup {
+  ariaDescription: string;
+  initialStep: string;
+  controls: {
+    abort: {
+      label: string;
+    };
+    previous: {
+      label: string;
+    };
+    next: {
+      label: string;
+    };
+    done: {
+      label: string;
+    };
+  };
+}

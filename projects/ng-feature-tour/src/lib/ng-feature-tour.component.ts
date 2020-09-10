@@ -4,6 +4,7 @@ import {
   FeatureTourStep,
   FeatureTourEventEnum,
   FeatureTourStepBounds,
+  FeatureTourSetup,
 } from './ng-feature-tour.model';
 import { FeatureTourService } from './ng-feature-tour.service';
 
@@ -15,8 +16,8 @@ import { FeatureTourService } from './ng-feature-tour.service';
 export class NgFeatureTourComponent implements OnInit {
   @Input()
   steps: FeatureTourStep[];
-
   enabled: boolean;
+  setup: FeatureTourSetup;
 
   constructor(private ngTourEventService: FeatureTourService) {}
 
@@ -115,15 +116,16 @@ export class NgFeatureTourComponent implements OnInit {
       throw 'NgFeatureTourComponent: no steps provided';
     }
 
-    this.ngTourEventService.initialize.subscribe((target: string) => {
+    this.ngTourEventService.initialize.subscribe((setup: FeatureTourSetup) => {
       const initialStep = this.steps
-        .filter((step) => step.target === target)
+        .filter((step) => step.target === setup.initialStep)
         .shift();
 
       if (!initialStep) {
-        throw `NgFeatureTourComponent: target "${target}" not found`;
+        throw `NgFeatureTourComponent: target "${setup.initialStep}" not found`;
       }
 
+      this.setup = setup;
       this.setFocus(initialStep);
     });
   }
@@ -163,12 +165,11 @@ export class NgFeatureTourComponent implements OnInit {
   }
 
   getRoleDescription(step: FeatureTourStep, stepIndex: number): string {
-    const count = this.steps.length;
     const current = stepIndex + 1;
 
-    return `Tour composto por ${count} passos.
-            Você está no passo ${current}. ${step.title}.
-            ${step.description}`;
+    return this.setup.ariaDescription
+      .replace('{total}', this.steps.length.toString())
+      .replace('{current}', current.toString());
   }
 
   previous(currentStep: FeatureTourStep, currentStepIndex: number): void {
