@@ -1,4 +1,14 @@
-.ng-feature-tour-step {
+.ft-wrapper {
+  position: fixed;
+  z-index: 9900;
+  width: 100%;
+  height: 100vh;
+  background-color: transparent;
+  top: 0;
+  left: 0;
+}
+
+.ft-step {
   max-width: 320px;
   min-width: 320px;
   position: fixed;
@@ -10,7 +20,7 @@
   transition: left 0.3s linear, top 0.3s linear, width 0.3s linear;
 }
 
-.ng-feature-tour-step::before {
+.ft-step::before {
   content: "";
   position: absolute;
   border: 16px solid #ffffff;
@@ -20,46 +30,46 @@
   width: 0;
 }
 
-.ng-feature-tour-step.to-top::before {
+.ft-step.to-top::before {
   bottom: -31px;
   border-bottom-color: transparent;
 }
 
-.ng-feature-tour-step.to-bottom::before {
+.ft-step.to-bottom::before {
   top: -31px;
   border-top-color: transparent;
 }
 
-.ng-feature-tour-step.to-left::before {
+.ft-step.to-left::before {
   left: 16px;
 }
 
-.ng-feature-tour-step.to-right::before {
+.ft-step.to-right::before {
   right: 16px;
 }
 
-.ng-feature-tour-step-bullet.is-current {
+.ft-step-bullet.is-current {
   background-color: #2980b9;
 }
 
-.ng-feature-tour-step-title {
+.ft-step-title {
   margin: 0 0 16px 0;
   font-size: 18px;
 }
 
-.ng-feature-tour-step-description {
+.ft-step-description {
   margin: 0 0 16px 0;
   font-size: 16px;
   line-height: 1.4;
 }
 
-.ng-feature-tour-step-bullet-list {
+.ft-step-bullet-list {
   margin: 0 0 16px 0;
   display: flex;
   align-items: center;
 }
 
-.ng-feature-tour-step-bullet {
+.ft-step-bullet {
   display: block;
   width: 10px;
   height: 10px;
@@ -68,7 +78,7 @@
   background-color: #bdc3c7;
 }
 
-.ng-feature-tour-lens {
+.ft-lens {
   position: fixed;
   z-index: 9990;
   box-shadow: 0 0 0 1000em rgba(0, 0, 0, 0.75);
@@ -76,12 +86,12 @@
     height 0.3s linear;
 }
 
-.ng-feature-tour-step-controls {
+.ft-step-controls {
   display: flex;
   justify-content: space-between;
 }
 
-.ng-feature-tour-step-controls button {
+.ft-step-controls button {
   appearance: none;
   font-size: 14px;
   font-weight: bold;
@@ -92,21 +102,13 @@
   background-color: #ffffff;
 }
 
-.ng-feature-tour-step-navigation {
+.ft-step-navigation {
   display: flex;
   justify-content: space-between;
 }
 
-.ng-feature-tour-step-navigation button {
+.ft-step-navigation button {
   margin-left: 16px;
   color: #ffffff;
   background-color: #2980b9;
-}
-
-.ng-feature-tour-overlay {
-  position: fixed;
-  z-index: 9900;
-  width: 100%;
-  height: 100vh;
-  background-color: transparent;
 }

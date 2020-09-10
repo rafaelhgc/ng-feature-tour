@@ -1,61 +1,63 @@
-<div [hidden]="!currentStep" cdkTrapFocus>
-  <div
-    #step
-    aria-modal="true"
-    role="dialog"
-    class="ng-feature-tour-step {{ bounds?.step.modifierClasses }}"
-    [style.left.px]="bounds?.step.left"
-    [style.top.px]="bounds?.step.top"
-    [style.maxWidth.px]="bounds?.step.maxWidth"
-  >
-    <h2 class="ng-feature-tour-step-title" tabindex="0">
-      {{ currentStep?.title }}
-    </h2>
+<div class="ft-wrapper" [hidden]="!enabled" (click)="escape()">
+  <div *ngFor="let step of steps; let index = index" [hidden]="!step.enabled">
+    <div
+      class="ft-lens"
+      [style.left.px]="step.bounds?.lens.left"
+      [style.top.px]="step.bounds?.lens.top"
+      [style.width.px]="step.bounds?.lens.width"
+      [style.height.px]="step.bounds?.lens.height"
+    ></div>
+    <div
+      cdkTrapFocus
+      aria-modal="true"
+      role="dialog"
+      class="ft-step {{ step.bounds?.modifiers }}"
+      [id]="'ft-step-' + step.target"
+      [attr.aria-roledescription]="getRoleDescription(step, index)"
+      [style.left.px]="step.bounds?.left"
+      [style.top.px]="step.bounds?.top"
+      [style.visibility]="step.visible ? 'visible' : 'hidden'"
+    >
+      <h2 class="ft-step-title">{{ step.title }}</h2>
+      <p class="ft-step-description">{{ step.description }}</p>
 
-    <p class="ng-feature-tour-step-description">
-      {{ currentStep?.description }}
-    </p>
-
-    <div hidden>
-      Tour composto por {{ config?.steps.length }} passos. Você está no passo
-      {{ currentStepIndex() }} de {{ config?.steps.length }}
-    </div>
-
-    <div class="ng-feature-tour-step-bullet-list">
-      <span
-        *ngFor="let step of config?.steps"
-        [class.is-current]="currentStep?.target === step.target"
-        class="ng-feature-tour-step-bullet"
-      ></span>
-    </div>
-
-    <nav class="ng-feature-tour-step-controls">
-      <div class="ng-feature-tour-step-abort">
-        <button *ngIf="!isLastStep()" (click)="abort()" tabindex="0">
-          {{ config?.controls.abort.label }}
-        </button>
+      <div class="ft-step-bullet-list">
+        <span
+          *ngFor="let step of steps"
+          class="ft-step-bullet"
+          [class.is-current]="step.enabled"
+        ></span>
       </div>
-      <div class="ng-feature-tour-step-navigation">
-        <button *ngIf="!isFirstStep()" (click)="previous()" tabindex="0">
-          {{ config?.controls.previous.label }}
-        </button>
-        <button *ngIf="!isLastStep()" (click)="next()" tabindex="0">
-          {{ config?.controls.next.label }}
-        </button>
-        <button *ngIf="isLastStep()" (click)="finish()" tabindex="0">
-          {{ config?.controls.done.label }}
-        </button>
+      <div class="ft-step-controls">
+        <div class="ft-step-abort">
+          <button
+            *ngIf="!isLastStep(index)"
+            (click)="abort(index)"
+            tabindex="0"
+          >
+            abort
+          </button>
+        </div>
+        <div class="ft-step-navigation">
+          <button
+            *ngIf="!isFirstStep(index)"
+            (click)="previous(index)"
+            tabindex="0"
+          >
+            previous
+          </button>
+          <button *ngIf="!isLastStep(index)" (click)="next(index)" tabindex="0">
+            next
+          </button>
+          <button
+            *ngIf="isLastStep(index)"
+            (click)="finish(index)"
+            tabindex="0"
+          >
+            done
+          </button>
+        </div>
       </div>
-    </nav>
+    </div>
   </div>
-
-  <div
-    #lens
-    class="ng-feature-tour-lens"
-    [style.left.px]="bounds?.lens.left"
-    [style.top.px]="bounds?.lens.top"
-    [style.width.px]="bounds?.lens.width"
-    [style.height.px]="bounds?.lens.height"
-  ></div>
-  <div class="ng-feature-tour-overlay" (click)="escape()"></div>
 </div>

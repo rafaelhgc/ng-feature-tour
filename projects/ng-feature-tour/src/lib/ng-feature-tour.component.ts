@@ -1,20 +1,11 @@
-import {
-  Component,
-  ViewChild,
-  ElementRef,
-  OnInit,
-  HostListener,
-} from '@angular/core';
+import { Component, OnInit, HostListener, Input } from '@angular/core';
 
-import { NgTourEventService } from './services/ng-feature-tour-event.service';
-import { NgTourStep } from './models/ng-feature-tour-step.model';
-import { NgTourEventEnum } from './models/ng-feature-tour-event.model';
 import {
-  LensBounds,
-  StepBounds,
-  TourBounds,
-} from './models/ng-feature-tour-bounds.model';
-import { NgTourConfig } from './models/ng-feature-tour-config.model';
+  FeatureTourStep,
+  FeatureTourEventEnum,
+  FeatureTourStepBounds,
+} from './ng-feature-tour.model';
+import { FeatureTourService } from './ng-feature-tour.service';
 
 @Component({
   selector: 'ng-feature-tour',
@@ -23,175 +14,151 @@ import { NgTourConfig } from './models/ng-feature-tour-config.model';
 })
 export class NgFeatureTourComponent implements OnInit {
   @HostListener('document:keydown.escape', ['$event'])
-  onKeydownHandler(event: KeyboardEvent) {
+  onEscapeHandler(event: KeyboardEvent) {
     event.preventDefault();
     this.escape();
   }
 
-  @ViewChild('step')
-  stepRef: ElementRef;
+  @Input()
+  steps: FeatureTourStep[];
 
-  @ViewChild('lens')
-  lensRef: ElementRef;
+  enabled: boolean;
 
-  initialStep: NgTourStep;
+  constructor(private ngTourEventService: FeatureTourService) {}
 
-  config: NgTourConfig;
-
-  currentStep: NgTourStep;
-
-  bounds: TourBounds;
-
-  constructor(private ngTourEventService: NgTourEventService) {}
-
-  private scrollToTop({ target }: NgTourStep): void {
-    window.scrollTo(0, document.getElementById(target).offsetTop - 16);
+  private scrollToTop(step: FeatureTourStep): void {
+    window.scrollTo(0, document.getElementById(step.target).offsetTop - 16);
   }
 
-  private getStepByTarget(target: string): NgTourStep {
-    return this.config.steps.filter((step) => step.target === target).pop();
-  }
-
-  private getIndexFromStep(search?: NgTourStep): number {
-    const step = search || this.currentStep;
-
-    if (!step) {
-      return -1;
-    }
-
-    return this.config.steps.map(({ target }) => target).indexOf(step.target);
-  }
-
-  private emitChangeEvent(step: NgTourStep, event: NgTourEventEnum): void {
+  private emitChangeEvent(
+    step: FeatureTourStep,
+    event: FeatureTourEventEnum
+  ): void {
     this.ngTourEventService.onChange.emit({ event: event, step: step });
   }
 
-  private getStepBounds(target: DOMRect): StepBounds {
+  private getBounds(
+    step: HTMLElement,
+    target: HTMLElement
+  ): FeatureTourStepBounds {
     const margin = 32;
-    const stepRect = this.stepRef.nativeElement.getBoundingClientRect();
+    const stepRect = step.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
 
     let left: number;
     let top: number;
-    let modifierClasses: string[] = [];
+    let modifiers: string[] = [];
 
     // axis y
-    if (target.y > screen.availHeight - (target.y + target.height)) {
-      modifierClasses.push('to-top');
-      top = target.y - stepRect.height - margin;
+    if (
+      targetRect.y >
+      screen.availHeight - (targetRect.y + targetRect.height)
+    ) {
+      modifiers.push('to-top');
+      top = targetRect.y - stepRect.height - margin;
     } else {
-      modifierClasses.push('to-bottom');
-      top = target.y + target.height + margin;
+      modifiers.push('to-bottom');
+      top = targetRect.y + targetRect.height + margin;
     }
 
     // axis x
-    if (target.x > screen.availWidth / 2) {
-      modifierClasses.push('to-right');
-      left = target.x + target.width - stepRect.width;
+    if (targetRect.x > screen.availWidth / 2) {
+      modifiers.push('to-right');
+      left = targetRect.x + targetRect.width - stepRect.width;
     } else {
-      modifierClasses.push('to-left');
-      left = target.x;
+      modifiers.push('to-left');
+      left = targetRect.x;
     }
 
     return {
       left,
       top,
-      modifierClasses: modifierClasses.join(' '),
+      modifiers: modifiers.join(' '),
+      lens: {
+        left: targetRect.left,
+        top: targetRect.top,
+        width: targetRect.width,
+        height: targetRect.height,
+      },
     };
   }
 
-  private getLensBounds(target: DOMRect): LensBounds {
-    const { y, x, width, height } = target;
+  private applyBounds(step: FeatureTourStep): void {
+    const stepId = `ft-step-${step.target}`;
+    const targetElement = document.getElementById(step.target);
+    const stepElement = document.getElementById(stepId);
 
-    return { top: y, left: x, width, height };
+    step.bounds = this.getBounds(stepElement, targetElement);
   }
 
-  private applyBounds(): void {
-    const targetRect = document
-      .getElementById(this.currentStep.target)
-      .getBoundingClientRect();
-    const step = this.getStepBounds(targetRect);
-    const lens = this.getLensBounds(targetRect);
+  private setFocus(step: FeatureTourStep): void {
+    this.scrollToTop(step);
+    this.enabled = true;
+    step.enabled = true;
 
-    this.bounds = { step, lens };
-  }
-
-  private setFocus(): void {
-    this.scrollToTop(this.currentStep);
+    // render delay trick
     setTimeout(() => {
-      this.applyBounds();
-      this.stepRef.nativeElement.children.item(0).focus();
-    }, 0);
-  }
-
-  private changeStep(event: NgTourEventEnum, step?: NgTourStep): void {
-    this.currentStep = step;
-    this.emitChangeEvent(this.currentStep, event);
-    this.setFocus();
+      this.applyBounds(step);
+      step.visible = true;
+    }, 1);
   }
 
   ngOnInit(): void {
-    this.ngTourEventService.initialize.subscribe((config: NgTourConfig) => {
-      this.config = config;
-      this.start();
+    if (!this.steps || this.steps.length === 0) {
+      throw 'NgFeatureTourComponent: no steps provided';
+    }
+
+    this.ngTourEventService.initialize.subscribe((target: string) => {
+      const initialStep = this.steps
+        .filter((step) => step.target === target)
+        .shift();
+
+      if (!initialStep) {
+        throw `NgFeatureTourComponent: target "${target}" not found`;
+      }
+
+      this.setFocus(initialStep);
     });
   }
 
-  start() {
-    let initialStep: NgTourStep;
+  next(stepIndex: number): void {
+    const currentStep = this.steps[stepIndex];
 
-    if (!this.config.lastTarget) {
-      initialStep = this.config.steps[0];
-    } else {
-      initialStep = this.getStepByTarget(this.config.lastTarget);
-    }
-
-    this.changeStep(NgTourEventEnum.Start, initialStep);
+    currentStep.enabled = false;
+    this.setFocus(this.steps[stepIndex + 1]);
   }
 
-  next(): void {
-    const stepIndex = this.getIndexFromStep();
-    const nextStep = this.config.steps[stepIndex + 1];
+  previous(stepIndex: number): void {
+    const currentStep = this.steps[stepIndex];
 
-    this.changeStep(NgTourEventEnum.Next, nextStep);
+    currentStep.enabled = false;
+    this.setFocus(this.steps[stepIndex - 1]);
   }
 
-  previous(): void {
-    const stepIndex = this.getIndexFromStep();
-    const previousStep = this.config.steps[stepIndex - 1];
+  finish(): void {}
 
-    this.changeStep(NgTourEventEnum.Previous, previousStep);
+  escape(): void {}
+
+  abort(): void {}
+
+  isLastStep(stepIndex: number): boolean {
+    return stepIndex === this.steps.length - 1;
   }
 
-  finish(): void {
-    this.emitChangeEvent(this.currentStep, NgTourEventEnum.Finish);
-    this.currentStep = null;
+  isFirstStep(stepIndex: number): boolean {
+    return stepIndex === 0;
   }
 
-  escape(): void {
-    this.emitChangeEvent(this.currentStep, NgTourEventEnum.Escape);
-    this.currentStep = null;
+  getAriasIdentifiers(target: string): string {
+    return `ft-title-${target} ft-description-${target}`;
   }
 
-  abort(): void {
-    this.emitChangeEvent(this.currentStep, NgTourEventEnum.Abort);
-    this.currentStep = null;
-  }
+  getRoleDescription(step: FeatureTourStep, stepIndex: number): string {
+    const count = this.steps.length;
+    const current = stepIndex + 1;
 
-  isLastStep(): boolean {
-    const currentStepIndex = this.getIndexFromStep();
-
-    return (
-      this.currentStep && currentStepIndex === this.config.steps.length - 1
-    );
-  }
-
-  isFirstStep(): boolean {
-    const currentStepIndex = this.getIndexFromStep();
-
-    return currentStepIndex === 0;
-  }
-
-  currentStepIndex(): number {
-    return this.getIndexFromStep() + 1;
+    return `Tour composto por ${count} passos.
+            Você está no passo ${current}. ${step.title}.
+            ${step.description}`;
   }
 }

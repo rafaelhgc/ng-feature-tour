@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgTourEventService, NgTourEvent, NgTourConfig } from 'ng-feature-tour';
+import { FeatureTourService, FeatureTourEvent } from 'ng-feature-tour';
 
 @Component({
   selector: 'app-root',
@@ -7,51 +7,34 @@ import { NgTourEventService, NgTourEvent, NgTourConfig } from 'ng-feature-tour';
 })
 export class AppComponent implements OnInit {
   title = 'ng-feature-tour-app';
-
-  tourConfig: NgTourConfig = {
-    controls: {
-      abort: {
-        label: 'ok, já entendi',
-      },
-      previous: {
-        label: 'anterior',
-      },
-      next: {
-        label: 'próximo',
-      },
-      done: {
-        label: 'encerrar',
-      },
+  steps = [
+    {
+      target: 'featureEasy',
+      title: 'Easy',
+      description: 'this is easy',
     },
-    steps: [
-      {
-        target: 'featureEasy',
-        title: 'Easy',
-        description: 'this is easy',
-      },
-      {
-        target: 'featureCustomizable',
-        title: 'Customizable',
-        description: 'this is customizable',
-      },
-      {
-        target: 'featureAccessible',
-        title: 'Accessible',
-        description:
-          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni cum consectetur dolores incidunt sed! Blanditiis consequuntur beatae laboriosam magni facilis cum minus quas? Nisi asperiores ratione quaerat, molestiae harum velit.',
-      },
-    ],
-  };
+    {
+      target: 'featureCustomizable',
+      title: 'Customizable',
+      description: 'this is customizable',
+    },
+    {
+      target: 'featureAccessible',
+      title: 'Accessible',
+      description:
+        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni cum consectetur dolores incidunt sed! Blanditiis consequuntur beatae laboriosam magni facilis cum minus quas? Nisi asperiores ratione quaerat, molestiae harum velit.',
+    },
+  ];
 
-  constructor(private ngFeatureTourService: NgTourEventService) {}
+  constructor(private featureTourService: FeatureTourService) {}
 
   ngOnInit(): void {
-    this.ngFeatureTourService.onChange.subscribe((event: NgTourEvent) =>
+    this.featureTourService.onChange.subscribe((event: FeatureTourEvent) =>
       console.log(event)
     );
   }
 
   start(): void {
-    this.ngFeatureTourService.initialize.emit(this.tourConfig);
+    this.featureTourService.initialize.emit('featureEasy');
   }
 }
