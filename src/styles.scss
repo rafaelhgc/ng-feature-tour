@@ -1,78 +1,45 @@
 body {
   margin: 0;
-  padding: 0;
   background-color: #2c3e50;
-  color: #ecf0f1;
-  font-family: "Lato", sans-serif;
+  font-family: sans-serif;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: "Raleway", sans-serif;
-  font-weight: 700;
+main {
+  width: 90%;
+  max-width: 960px;
+  margin: 0 auto;
+  color: #ecf0f1;
+
+  h1 {
+    font-size: 64px;
+  }
 }
 
 section {
-  padding: 64px 32px;
-  margin: 0;
-
-  h1 {
-    font-size: 48px;
-  }
-
-  h2 {
-    font-size: 24px;
-  }
-
-  p {
-    font-size: 20px;
-    font-weight: 300;
-    line-height: 1.5;
-  }
+  padding: 64px 0;
 }
 
-.wrapper {
-  width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
+.btn {
+  background-color: #1abc9c;
+  color: #ecf0f1;
+  border: 0;
+  border-radius: 0.25em;
+  padding: 16px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.feature-list {
+  background-color: #ecf0f1;
+  display: flex;
+  align-items: center;
+  margin: 32px 0;
 }
 
 .feature {
   flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #ecf0f1;
-  padding: 32px 16px;
-}
-
-.feature-list {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.btn {
-  padding: 16px;
-  border: 2px solid transparent;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: 700;
-  font-family: "Lato", sans-serif;
-  display: flex;
   align-items: center;
   justify-content: center;
-  line-height: 1;
-  cursor: pointer;
-
-  &-primary {
-    background-color: #1abc9c;
-    color: #ffffff;
-  }
+  padding: 32px;
 }
