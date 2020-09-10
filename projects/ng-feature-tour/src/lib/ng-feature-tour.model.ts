@@ -42,20 +42,12 @@ export interface FeatureTourStepBounds {
 }
 
 export interface FeatureTourSetup {
-  ariaDescription: string;
+  a11ty: string;
   initialStep: string;
   controls: {
-    abort: {
-      label: string;
-    };
-    previous: {
-      label: string;
-    };
-    next: {
-      label: string;
-    };
-    done: {
-      label: string;
-    };
+    abort: string;
+    previous: string;
+    next: string;
+    done: string;
   };
 }

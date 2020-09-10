@@ -99,15 +99,25 @@ export class NgFeatureTourComponent implements OnInit {
     step.bounds = this.getBounds(stepElement, targetElement);
   }
 
-  private setFocus(step: FeatureTourStep): void {
+  private captureFocus(step: FeatureTourStep): void {
+    const stepId = `ft-step-${step.target}`;
+    const tabable = document.querySelectorAll(`#${stepId} [tabindex]`).item(0);
+
+    setTimeout(() => {
+      (<HTMLElement>tabable).focus();
+    }, 1);
+  }
+
+  private enableStep(step: FeatureTourStep): void {
     this.scrollToTop(step);
     this.enabled = true;
     step.enabled = true;
 
     // render delay trick
     setTimeout(() => {
-      this.applyBounds(step);
       step.visible = true;
+      this.applyBounds(step);
+      this.captureFocus(step);
     }, 1);
   }
 
@@ -126,7 +136,7 @@ export class NgFeatureTourComponent implements OnInit {
       }
 
       this.setup = setup;
-      this.setFocus(initialStep);
+      this.enableStep(initialStep);
     });
   }
 
@@ -164,10 +174,14 @@ export class NgFeatureTourComponent implements OnInit {
     return `ft-title-${target} ft-description-${target}`;
   }
 
-  getRoleDescription(step: FeatureTourStep, stepIndex: number): string {
+  getA11tyDescription(step: FeatureTourStep): string {
+    return `${step.title}. ${step.description}.`;
+  }
+
+  getA11tyLabel(stepIndex: number): string {
     const current = stepIndex + 1;
 
-    return this.setup.ariaDescription
+    return this.setup.a11ty
       .replace('{total}', this.steps.length.toString())
       .replace('{current}', current.toString());
   }
@@ -176,7 +190,7 @@ export class NgFeatureTourComponent implements OnInit {
     const step = this.steps[currentStepIndex - 1];
 
     this.disableStep(currentStep);
-    this.setFocus(step);
+    this.enableStep(step);
     this.emitChangeEvent(step, FeatureTourEventEnum.Previous);
   }
 
@@ -184,7 +198,7 @@ export class NgFeatureTourComponent implements OnInit {
     const step = this.steps[currentStepIndex + 1];
 
     this.disableStep(currentStep);
-    this.setFocus(step);
+    this.enableStep(step);
     this.emitChangeEvent(step, FeatureTourEventEnum.Next);
   }
 
