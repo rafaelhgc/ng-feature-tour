@@ -9,20 +9,19 @@ export class AppComponent implements OnInit {
   title = 'ng-feature-tour-app';
   steps = [
     {
-      target: 'featureEasy',
-      title: 'Easy',
-      description: 'this is easy',
+      target: 'feature-easy',
+      title: 'fácil de usar',
+      description: 'este componente é fácil de usar',
     },
     {
-      target: 'featureCustomizable',
-      title: 'Customizable',
-      description: 'this is customizable',
+      target: 'feature-customizable',
+      title: 'customizável',
+      description: 'este componente é customizável',
     },
     {
-      target: 'featureAccessible',
-      title: 'Accessible',
-      description:
-        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni cum consectetur dolores incidunt sed! Blanditiis consequuntur beatae laboriosam magni facilis cum minus quas? Nisi asperiores ratione quaerat, molestiae harum velit.',
+      target: 'feature-accessible',
+      title: 'acessível',
+      description: 'este componente é acessível',
     },
   ];
 
@@ -34,7 +33,7 @@ export class AppComponent implements OnInit {
     );
   }
 
-  start(): void {
-    this.featureTourService.initialize.emit('featureEasy');
+  startTour(): void {
+    this.featureTourService.initialize.emit('feature-easy');
   }
 }
