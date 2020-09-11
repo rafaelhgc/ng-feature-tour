@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
   title = 'ng-feature-tour-app';
 
   setup: FeatureTourSetup = {
-    a11ty: 'Você está no passo {current} de {total}.',
+    a11ty: 'Você está no passo {index} de {total}.',
     initialStep: 'feature-easy',
     controls: {
       abort: 'ok, já entendi',

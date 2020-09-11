@@ -1,4 +1,4 @@
-<div class="ft-wrapper" *ngIf="enabled">
+<div class="ft-wrapper" *ngIf="enabled" cdkTrapFocus>
   <div *ngFor="let step of steps; let index = index" [hidden]="!step.enabled">
     <div
       class="ft-lens"
@@ -8,21 +8,18 @@
       [style.height.px]="step.bounds?.lens.height"
     ></div>
     <div
-      cdkTrapFocus
       aria-modal="true"
       role="dialog"
       class="ft-step {{ step.bounds?.modifiers }}"
-      [id]="'ft-step-' + step.target"
-      [attr.aria-roledescription]="getA11tyDescription(step)"
-      [attr.aria-label]="getA11tyLabel(index)"
+      [id]="step | identify"
+      [attr.aria-roledescription]="step | roleDescription"
+      [attr.aria-label]="setup.a11ty | ariaLabel: steps.length:index"
       [style.left.px]="step.bounds?.left"
       [style.top.px]="step.bounds?.top"
       [style.visibility]="step.visible ? 'visible' : 'hidden'"
     >
-      <h2 [id]="'ft-step-title-' + step.target" class="ft-step-title">{{ step.title }}</h2>
-      <p [id]="'ft-step-description-' + step.target" class="ft-step-description" aria-label="step.description">
-        {{ step.description }}
-      </p>
+      <h2 class="ft-step-title">{{ step.title }}</h2>
+      <div class="ft-step-description">{{ step.description }}</div>
 
       <div class="ft-step-bullet-list">
         <span

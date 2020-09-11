@@ -174,18 +174,6 @@ export class NgFeatureTourComponent implements OnInit {
     return `ft-title-${target} ft-description-${target}`;
   }
 
-  getA11tyDescription(step: FeatureTourStep): string {
-    return `${step.title}. ${step.description}.`;
-  }
-
-  getA11tyLabel(stepIndex: number): string {
-    const current = stepIndex + 1;
-
-    return this.setup.a11ty
-      .replace('{total}', this.steps.length.toString())
-      .replace('{current}', current.toString());
-  }
-
   previous(currentStep: FeatureTourStep, currentStepIndex: number): void {
     const step = this.steps[currentStepIndex - 1];
 
