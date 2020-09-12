@@ -1,9 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  FeatureTourService,
-  FeatureTourEvent,
-  FeatureTourSetup,
-} from 'ng-feature-tour';
+import { FeatureTourService, Event, Setup } from 'ng-feature-tour';
 
 @Component({
   selector: 'app-root',
@@ -12,8 +8,10 @@ import {
 export class AppComponent implements OnInit {
   title = 'ng-feature-tour-app';
 
-  setup: FeatureTourSetup = {
-    a11ty: 'Você está no passo {index} de {total}.',
+  setup: Setup = {
+    a11ty: {
+      roleDescription: 'Você está no passo {index} de {total}.',
+    },
     initialStep: 'feature-easy',
     controls: {
       abort: 'ok, já entendi',
@@ -44,7 +42,7 @@ export class AppComponent implements OnInit {
   constructor(private featureTourService: FeatureTourService) {}
 
   ngOnInit(): void {
-    this.featureTourService.onChange.subscribe((event: FeatureTourEvent) =>
+    this.featureTourService.onChange.subscribe((event: Event) =>
       console.log(event)
     );
   }
