@@ -1,4 +1,4 @@
-export enum FeatureTourEventEnum {
+export enum EventEnum {
   Start = 'START',
   Next = 'NEXT',
   Previous = 'PREVIOUS',
@@ -7,42 +7,38 @@ export enum FeatureTourEventEnum {
   Escape = 'ESCAPE',
 }
 
-export interface FeatureTourStepArias {
-  id: string;
-  title: string;
-  description: string;
-  label: string;
+export interface Event {
+  event: EventEnum;
+  step: Step;
 }
 
-export interface FeatureTourEvent {
-  event: FeatureTourEventEnum;
-  step: FeatureTourStep;
-}
-
-export interface FeatureTourStep {
+export interface Step {
   target: string;
   title: string;
   description: string;
   enabled?: boolean;
   visible?: boolean;
-  bounds?: FeatureTourStepBounds;
-  arias?: FeatureTourStepArias;
+  bounds?: StepBounds;
 }
 
-export interface FeatureTourStepBounds {
+export interface LensBounds {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+export interface StepBounds {
   left: number;
   top: number;
   modifiers: string;
-  lens: {
-    left: number;
-    top: number;
-    width: number;
-    height: number;
-  };
+  lens: LensBounds;
 }
 
-export interface FeatureTourSetup {
-  a11ty: string;
+export interface Setup {
+  a11ty: {
+    roleDescription: string;
+  };
   initialStep: string;
   controls: {
     abort: string;

@@ -1,14 +1,14 @@
 import { Injectable, EventEmitter } from '@angular/core';
 
-import { FeatureTourEvent, FeatureTourSetup } from './ng-feature-tour.model';
+import { Event, Setup } from './ng-feature-tour.model';
 
 @Injectable({ providedIn: 'root' })
 export class FeatureTourService {
-  onChange: EventEmitter<FeatureTourEvent>;
-  initialize: EventEmitter<FeatureTourSetup>;
+  onChange: EventEmitter<Event>;
+  initialize: EventEmitter<Setup>;
 
   constructor() {
-    this.onChange = new EventEmitter<FeatureTourEvent>();
-    this.initialize = new EventEmitter<FeatureTourSetup>();
+    this.onChange = new EventEmitter<Event>();
+    this.initialize = new EventEmitter<Setup>();
   }
 }
