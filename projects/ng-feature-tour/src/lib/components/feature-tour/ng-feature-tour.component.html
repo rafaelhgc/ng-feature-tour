@@ -12,8 +12,10 @@
       role="dialog"
       class="ft-step {{ step.bounds?.modifiers }}"
       [id]="step | identify"
-      [attr.aria-roledescription]="step | roleDescription"
-      [attr.aria-label]="setup.a11ty | ariaLabel: steps.length:index"
+      [attr.aria-roledescription]="step | ariaDescription"
+      [attr.aria-label]="
+        setup.a11ty.roleDescription | ariaLabel: steps.length:index
+      "
       [style.left.px]="step.bounds?.left"
       [style.top.px]="step.bounds?.top"
       [style.visibility]="step.visible ? 'visible' : 'hidden'"
@@ -30,28 +32,36 @@
       </div>
       <div class="ft-step-controls">
         <div class="ft-step-abort">
-          <button *ngIf="!isLastStep(index)" (click)="abort(step)" tabindex="0">
-            {{ setup.controls.abort }}
-          </button>
+          <button
+            type="button"
+            tabindex="0"
+            *ngIf="!isLastStep(index)"
+            (click)="abort(step)"
+            [innerHTML]="setup.controls.abort"
+          ></button>
         </div>
         <div class="ft-step-navigation">
           <button
+            type="button"
+            tabindex="0"
             *ngIf="!isFirstStep(index)"
             (click)="previous(step, index)"
-            tabindex="0"
-          >
-            {{ setup.controls.previous }}
-          </button>
+            [innerHTML]="setup.controls.previous"
+          ></button>
           <button
+            type="button"
+            tabindex="0"
             *ngIf="!isLastStep(index)"
             (click)="next(step, index)"
+            [innerHTML]="setup.controls.next"
+          ></button>
+          <button
+            type="button"
             tabindex="0"
-          >
-            {{ setup.controls.next }}
-          </button>
-          <button *ngIf="isLastStep(index)" (click)="finish(step)" tabindex="0">
-            {{ setup.controls.done }}
-          </button>
+            *ngIf="isLastStep(index)"
+            (click)="finish(step)"
+            [innerHTML]="setup.controls.done"
+          ></button>
         </div>
       </div>
     </div>
