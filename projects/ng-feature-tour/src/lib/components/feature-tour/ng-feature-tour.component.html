@@ -1,5 +1,6 @@
 <div class="ft-wrapper" *ngIf="enabled" cdkTrapFocus>
   <div *ngFor="let step of steps; let index = index" [hidden]="!step.enabled">
+    <div class="ft-scape-handler" (click)="onEscapeHandler()"></div>
     <div
       class="ft-lens"
       [style.left.px]="step.bounds?.lens.left"
