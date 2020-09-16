@@ -30,7 +30,8 @@ export class AppComponent implements OnInit {
     {
       target: 'feature-customizable',
       title: 'customizável',
-      description: 'este componente é customizável',
+      description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet mollis diam imperdiet vulputate. Sed sollicitudin, erat et ornare imperdiet, orci elit ullamcorper nibh, ac pulvinar erat velit quis diam.',
     },
     {
       target: 'feature-accessible',
