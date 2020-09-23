@@ -6,14 +6,12 @@ import { NgFeatureTourComponent } from './components/feature-tour/ng-feature-tou
 
 import { AriaDescriptionPipe } from './pipes/aria-description.pipe';
 import { AriaLabelPipe } from './pipes/aria-label.pipe';
-import { IdentifyPipe } from './pipes/identify.pipe';
 
 @NgModule({
   declarations: [
     NgFeatureTourComponent,
     AriaDescriptionPipe,
     AriaLabelPipe,
-    IdentifyPipe,
   ],
   imports: [BrowserModule, A11yModule],
   exports: [NgFeatureTourComponent],

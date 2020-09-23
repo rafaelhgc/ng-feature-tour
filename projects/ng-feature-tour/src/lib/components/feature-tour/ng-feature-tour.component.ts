@@ -93,12 +93,9 @@ export class NgFeatureTourComponent implements OnInit {
   }
 
   private captureFocus(step: Step): void {
-    const stepId = `ft-step-${step.target}`;
-    const tabable = document.querySelectorAll(`#${stepId} [tabindex]`).item(0);
+    const target = document.getElementById(`ft-step-title-${step.target}`);
 
-    setTimeout(() => {
-      (<HTMLElement>tabable).focus();
-    }, 1);
+    setTimeout(() => target.focus(), 0);
   }
 
   private enableStep(step: Step): void {
@@ -111,7 +108,7 @@ export class NgFeatureTourComponent implements OnInit {
       step.visible = true;
       this.applyBounds(step);
       this.captureFocus(step);
-    }, 1);
+    }, 0);
   }
 
   ngOnInit(): void {

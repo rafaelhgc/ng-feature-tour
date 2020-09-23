@@ -12,7 +12,6 @@
       aria-modal="true"
       role="dialog"
       class="ft-step {{ step.bounds?.modifiers }}"
-      [id]="step | identify"
       [attr.aria-roledescription]="step | ariaDescription"
       [attr.aria-label]="
         setup.a11ty.roleDescription | ariaLabel: steps.length:index
@@ -21,7 +20,13 @@
       [style.top.px]="step.bounds?.top"
       [style.visibility]="step.visible ? 'visible' : 'hidden'"
     >
-      <h2 class="ft-step-title">{{ step.title }}</h2>
+      <h2
+        id="ft-step-title-{{ step.target }}"
+        class="ft-step-title"
+        tabindex="-1"
+      >
+        {{ step.title }}
+      </h2>
       <div class="ft-step-description">{{ step.description }}</div>
 
       <div class="ft-step-bullet-list">

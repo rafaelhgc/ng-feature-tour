@@ -145,9 +145,7 @@
               "projects/ng-feature-tour/tsconfig.lib.json",
               "projects/ng-feature-tour/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
