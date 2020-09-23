@@ -16,9 +16,7 @@ import { FeatureTourService } from '../../ng-feature-tour.service';
 export class NgFeatureTourComponent implements OnInit {
   @Input()
   steps: Step[];
-
   enabled: boolean;
-
   setup: Setup;
 
   constructor(private featureTourService: FeatureTourService) {}
@@ -94,11 +92,10 @@ export class NgFeatureTourComponent implements OnInit {
 
   private captureFocus(step: Step): void {
     const trapFocus = document.querySelector(`#ft-step-${step.target} h2`);
-
     setTimeout(() => (trapFocus as HTMLElement).focus(), 0);
   }
 
-  private enableStep(step: Step): void {
+  private enableStep(step: Step, toAbortStep?: Step): void {
     this.scrollToTop(step);
     this.enabled = true;
     step.enabled = true;
@@ -108,6 +105,10 @@ export class NgFeatureTourComponent implements OnInit {
       step.visible = true;
       this.applyBounds(step);
       this.captureFocus(step);
+
+      if (toAbortStep) {
+        this.disableStep(toAbortStep);
+      }
     }, 0);
   }
 
@@ -175,8 +176,7 @@ export class NgFeatureTourComponent implements OnInit {
   next(currentStep: Step, currentStepIndex: number): void {
     const step = this.steps[currentStepIndex + 1];
 
-    this.disableStep(currentStep);
-    this.enableStep(step);
+    this.enableStep(step, currentStep);
     this.emitChangeEvent(step, EventEnum.Next);
   }
 
