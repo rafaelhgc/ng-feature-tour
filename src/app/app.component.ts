@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FeatureTourService, Event, Setup } from 'ng-feature-tour';
+import {
+  Event,
+  Setup,
+  Step,
+} from './modules/ng-feature-tour/ng-feature-tour.model';
+import { FeatureTourService } from './modules/ng-feature-tour/ng-feature-tour.service';
 
 @Component({
   selector: 'app-root',
@@ -9,8 +14,8 @@ export class AppComponent implements OnInit {
   title = 'ng-feature-tour-app';
 
   setup: Setup = {
-    a11ty: {
-      roleDescription: 'Você está no passo {index} de {total}.',
+    a11y: {
+      pagination: 'Você está no passo {index} de {total}.',
     },
     initialStep: 'feature-easy',
     controls: {
@@ -21,22 +26,33 @@ export class AppComponent implements OnInit {
     },
   };
 
-  steps = [
+  steps: Step[] = [
     {
       target: 'feature-easy',
       title: 'fácil de usar',
       description: 'este componente é fácil de usar',
+      a11y: {
+        label: 'tour de funcionalidades.',
+        description: 'gráfico: fácil de usar',
+      },
     },
     {
       target: 'feature-customizable',
       title: 'customizável',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet mollis diam imperdiet vulputate. Sed sollicitudin, erat et ornare imperdiet, orci elit ullamcorper nibh, ac pulvinar erat velit quis diam.',
+      description: 'este componente é customizável',
+      a11y: {
+        label: 'tour de funcionalidades.',
+        description: 'gráfico: customizável',
+      },
     },
     {
       target: 'feature-accessible',
       title: 'acessível',
       description: 'este componente é acessível',
+      a11y: {
+        label: 'tour de funcionalidades.',
+        description: 'gráfico: acessível',
+      },
     },
   ];
 

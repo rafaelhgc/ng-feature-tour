@@ -93,9 +93,9 @@ export class NgFeatureTourComponent implements OnInit {
   }
 
   private captureFocus(step: Step): void {
-    const target = document.getElementById(`ft-step-title-${step.target}`);
+    const trapFocus = document.querySelector(`#ft-step-${step.target} h2`);
 
-    setTimeout(() => target.focus(), 0);
+    setTimeout(() => (trapFocus as HTMLElement).focus(), 0);
   }
 
   private enableStep(step: Step): void {

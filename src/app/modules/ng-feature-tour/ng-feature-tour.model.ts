@@ -19,6 +19,10 @@ export interface Step {
   enabled?: boolean;
   visible?: boolean;
   bounds?: StepBounds;
+  a11y: {
+    description:string;
+    label: string;
+  }
 }
 
 export interface LensBounds {
@@ -36,8 +40,8 @@ export interface StepBounds {
 }
 
 export interface Setup {
-  a11ty: {
-    roleDescription: string;
+  a11y: {
+    pagination: string;
   };
   initialStep: string;
   controls: {
