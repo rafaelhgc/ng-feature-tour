@@ -100,7 +100,7 @@ export class FeatureTourStepComponent implements AfterViewInit {
   }
 
   abort(): void {
-    this.change.emit({ step: this.step, event: FeatureTourEventEnum.Done });
+    this.change.emit({ step: this.step, event: FeatureTourEventEnum.Abort });
   }
 
   @HostListener('document:keydown.escape', [])

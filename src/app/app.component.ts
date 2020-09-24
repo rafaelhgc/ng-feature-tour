@@ -1,13 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NgFeatureTourComponent } from './ng-feature-tour/components/feature-tour/ng-feature-tour.component';
 
 import { FeatureTourConfig } from './ng-feature-tour/models/feature-tour-config';
+import { FeatureTourEvent } from './ng-feature-tour/models/feature-tour-event';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   @ViewChild('tour')
   tour: NgFeatureTourComponent;
 
@@ -51,9 +52,10 @@ export class AppComponent implements OnInit {
       },
     ],
   };
-  constructor() {}
 
-  ngOnInit(): void {}
+  onClose(event: FeatureTourEvent): void {
+    console.log(event.event, event.step.target);
+  }
 
   startTour(): void {
     this.tour.start();

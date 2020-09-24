@@ -27,4 +27,8 @@
   </section>
 </main>
 
-<ng-feature-tour #tour [tour]="tourConfig"></ng-feature-tour>
+<ng-feature-tour
+  #tour
+  [tour]="tourConfig"
+  (close)="onClose($event)"
+></ng-feature-tour>

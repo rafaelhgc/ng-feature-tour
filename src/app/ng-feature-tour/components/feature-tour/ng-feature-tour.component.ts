@@ -1,7 +1,11 @@
-import { Component, OnInit, HostListener, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
 import { FeatureTourConfig } from '../../models/feature-tour-config';
 import { FeatureTourStep } from '../../models/feature-tour-step';
+import {
+  FeatureTourEvent,
+  FeatureTourEventEnum,
+} from '../../models/feature-tour-event';
 
 @Component({
   selector: 'ng-feature-tour',
@@ -10,9 +14,23 @@ import { FeatureTourStep } from '../../models/feature-tour-step';
 export class NgFeatureTourComponent implements OnInit {
   @Input()
   tour: FeatureTourConfig;
+
+  @Output()
+  close: EventEmitter<FeatureTourEvent>;
+
+  @Output()
+  previous: EventEmitter<FeatureTourEvent>;
+
+  @Output()
+  next: EventEmitter<FeatureTourEvent>;
+
   steps: FeatureTourStep[];
 
-  constructor() {}
+  constructor() {
+    this.close = new EventEmitter<FeatureTourEvent>();
+    this.previous = new EventEmitter<FeatureTourEvent>();
+    this.next = new EventEmitter<FeatureTourEvent>();
+  }
 
   ngOnInit(): void {
     this.steps = this.tour.steps.map((step, i) => ({
@@ -60,56 +78,41 @@ export class NgFeatureTourComponent implements OnInit {
     }
   }
 
-  private disableStep(step: FeatureTourStep): void {
-    step.enabled = false;
-    step.visible = false;
-  }
-
   private scrollToTop(step: FeatureTourStep): void {
     const stepElement = document.getElementById(step.target);
     window.scrollTo(0, stepElement.offsetTop - 16);
   }
 
-  private captureFocus(step: FeatureTourStep): void {
-    const trapFocus = document.getElementById(step.id).querySelector('h2');
-    setTimeout(() => {
-      (trapFocus as HTMLElement).focus();
-    }, 1);
-  }
-
   private enableStep(step: FeatureTourStep): void {
     this.scrollToTop(step);
     step.enabled = true;
-
-    // render delay trick
-    setTimeout(() => {
-      step.visible = true;
-      this.captureFocus(step);
-    }, 0);
+    step.visible = true;
   }
 
-  close(step: FeatureTourStep): void {
-    step.enabled = false;
-    step.visible = false;
+  onChange(change: FeatureTourEvent) {
+    switch (change.event) {
+      case FeatureTourEventEnum.Abort:
+      case FeatureTourEventEnum.Done:
+      case FeatureTourEventEnum.Escape:
+        this.onClose(change);
+        break;
+      case FeatureTourEventEnum.Next:
+        this.onNext(change);
+      case FeatureTourEventEnum.Previous:
+        this.onPrevious(change);
+        break;
+    }
   }
 
-  isLastStep(stepIndex: number): boolean {
-    return stepIndex === this.steps.length - 1;
+  onClose(event: FeatureTourEvent): void {
+    this.close.emit(event);
   }
 
-  isFirstStep(stepIndex: number): boolean {
-    return stepIndex === 0;
+  onPrevious(event: FeatureTourEvent): void {
+    this.previous.emit(event);
   }
 
-  getAriasIdentifiers(target: string): string {
-    return `ft-title-${target} ft-description-${target}`;
+  onNext(event: FeatureTourEvent): void {
+    this.next.emit(event);
   }
-
-  previous(step: FeatureTourStep): void {}
-
-  next(step: FeatureTourStep): void {}
-
-  finish(currentStep: FeatureTourStep): void {}
-
-  abort(step: FeatureTourStep): void {}
 }
