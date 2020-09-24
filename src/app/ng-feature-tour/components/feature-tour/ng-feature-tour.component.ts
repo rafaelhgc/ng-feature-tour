@@ -10,6 +10,7 @@ import {
 @Component({
   selector: 'ng-feature-tour',
   templateUrl: './ng-feature-tour.component.html',
+  styleUrls: ['./ng-feature-tour.component.scss'],
 })
 export class NgFeatureTourComponent implements OnInit {
   @Input()
@@ -78,13 +79,7 @@ export class NgFeatureTourComponent implements OnInit {
     }
   }
 
-  private scrollToTop(step: FeatureTourStep): void {
-    const stepElement = document.getElementById(step.target);
-    window.scrollTo(0, stepElement.offsetTop - 16);
-  }
-
   private enableStep(step: FeatureTourStep): void {
-    this.scrollToTop(step);
     step.enabled = true;
     step.visible = true;
   }
@@ -98,21 +93,38 @@ export class NgFeatureTourComponent implements OnInit {
         break;
       case FeatureTourEventEnum.Next:
         this.onNext(change);
+        break;
       case FeatureTourEventEnum.Previous:
         this.onPrevious(change);
         break;
     }
   }
 
+  scrollToTop(): void {
+    window.scrollTo(0, 0);
+  }
+
   onClose(event: FeatureTourEvent): void {
+    event.step.enabled = false;
+    this.scrollToTop();
     this.close.emit(event);
   }
 
   onPrevious(event: FeatureTourEvent): void {
-    this.previous.emit(event);
+    const nextStep = this.steps[event.step.index - 1];
+
+    event.step.enabled = false;
+    nextStep.enabled = true;
+
+    this.next.emit(event);
   }
 
   onNext(event: FeatureTourEvent): void {
+    const nextStep = this.steps[event.step.index + 1];
+
+    event.step.enabled = false;
+    nextStep.enabled = true;
+
     this.next.emit(event);
   }
 }

@@ -43,9 +43,12 @@ export class FeatureTourStepComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.targetElement = document.getElementById(this.step.target);
-    this.applyLensBounds();
-    this.applyStepBounds();
-    this.ref.detectChanges();
+    this.drawStep();
+  }
+
+  scrollElementToTop(): void {
+    const stepElement = document.getElementById(this.step.target);
+    window.scrollTo(0, stepElement.offsetTop - 16);
   }
 
   applyLensBounds(): void {
@@ -53,7 +56,7 @@ export class FeatureTourStepComponent implements AfterViewInit {
     this.lensBounds = { ...rect.toJSON() };
   }
 
-  private applyStepBounds(): void {
+  applyStepBounds(): void {
     const margin = 32;
     const stepElement = document.getElementById(this.step.id);
     const stepRect = stepElement.getBoundingClientRect();
@@ -104,7 +107,19 @@ export class FeatureTourStepComponent implements AfterViewInit {
   }
 
   @HostListener('document:keydown.escape', [])
-  escape() {
+  onScape() {
     this.change.emit({ step: this.step, event: FeatureTourEventEnum.Escape });
+  }
+
+  @HostListener('window:resize', [])
+  onResize() {
+    this.drawStep();
+  }
+
+  drawStep(): void {
+    this.scrollElementToTop();
+    this.applyLensBounds();
+    this.applyStepBounds();
+    this.ref.detectChanges();
   }
 }
