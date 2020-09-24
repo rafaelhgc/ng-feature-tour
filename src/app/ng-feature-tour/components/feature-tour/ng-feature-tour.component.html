@@ -1,71 +1,75 @@
-<div class="ft-wrapper" *ngIf="enabled" cdkTrapFocus>
-  <div *ngFor="let step of steps; let index = index" [hidden]="!step.enabled">
-    <div class="ft-scape-handler" (click)="onEscapeHandler()"></div>
-    <div
-      class="ft-lens"
-      [style.left.px]="step.bounds?.lens.left"
-      [style.top.px]="step.bounds?.lens.top"
-      [style.width.px]="step.bounds?.lens.width"
-      [style.height.px]="step.bounds?.lens.height"
-    ></div>
-    <div
-      id="ft-step-{{ step.target }}"
-      aria-modal="true"
-      role="dialog"
-      class="ft-step {{ step.bounds?.modifiers }}"
-      [attr.aria-roledescription]="step.a11y.description"
-      [attr.aria-label]="step.a11y.label"
-      [style.left.px]="step.bounds?.left"
-      [style.top.px]="step.bounds?.top"
-      [style.visibility]="step.visible ? 'visible' : 'hidden'"
-    >
-      <h2 class="ft-step-title" tabindex="-1">{{ step.title }}</h2>
-      <div class="ft-step-description">{{ step.description }}</div>
+<div class="feature-tour-wrapper">
+  <div *ngFor="let step of steps">
+    <div [hidden]="!step.enabled">
+      <div class="ft-scape-handler" (click)="onEscapeHandler()"></div>
+      <div
+        class="ft-lens"
+        [style.left.px]="step.bounds?.lens.left"
+        [style.top.px]="step.bounds?.lens.top"
+        [style.width.px]="step.bounds?.lens.width"
+        [style.height.px]="step.bounds?.lens.height"
+      ></div>
+      <div
+        aria-modal="true"
+        role="dialog"
+        class="ft-step {{ step.bounds?.modifiers }}"
+        [id]="step.id"
+        [attr.aria-roledescription]="step.a11y.description"
+        [attr.aria-label]="step.a11y.label"
+        [style.left.px]="step.bounds?.left"
+        [style.top.px]="step.bounds?.top"
+        [style.visibility]="step.visible ? 'visible' : 'hidden'"
+      >
+        <h2 class="ft-step-title" tabindex="-1">{{ step.title }}</h2>
+        <div class="ft-step-description">{{ step.description }}</div>
 
-      <div class="ft-step-bullet-list">
-        <span
-          *ngFor="let step of steps"
-          class="ft-step-bullet"
-          [class.is-current]="step.enabled"
-        ></span>
-      </div>
-      <div class="ft-step-pagination-description">
-        {{ setup.a11y.pagination | paginationDescription: steps.length:index }}
-      </div>
-      <div class="ft-step-controls">
-        <div class="ft-step-abort">
-          <button
-            type="button"
-            tabindex="0"
-            *ngIf="!isLastStep(index)"
-            (click)="abort(step)"
-            [innerHTML]="setup.controls.abort"
-          ></button>
+        <div class="ft-step-bullet-list">
+          <span
+            *ngFor="let step of steps"
+            class="ft-step-bullet"
+            [class.is-current]="step.enabled"
+          ></span>
         </div>
-        <div class="ft-step-navigation">
-          <button
-            type="button"
-            tabindex="0"
-            *ngIf="!isFirstStep(index)"
-            (click)="previous(step, index)"
-            [innerHTML]="setup.controls.previous"
-          ></button>
-          <button
-            type="button"
-            tabindex="0"
-            *ngIf="!isLastStep(index)"
-            (click)="next(step, index)"
-            [innerHTML]="setup.controls.next"
-          ></button>
-          <button
-            type="button"
-            tabindex="0"
-            *ngIf="isLastStep(index)"
-            (click)="finish(step)"
-            [innerHTML]="setup.controls.done"
-          ></button>
+        <div class="ft-step-pagination-description">
+          {{ step.a11y.pagination | paginationDescription: steps.length:index }}
+        </div>
+        <div class="ft-step-controls">
+          <div class="ft-step-abort">
+            <button
+              type="button"
+              tabindex="0"
+              *ngIf="step.controls.abort.enabled"
+              (click)="abort(step)"
+              [innerHTML]="step.controls.abort.label"
+            ></button>
+          </div>
+          <div class="ft-step-navigation">
+            <button
+              type="button"
+              tabindex="0"
+              *ngIf="step.controls.previous.enabled"
+              (click)="previous(step)"
+              [innerHTML]="step.controls.previous.label"
+            ></button>
+            <button
+              type="button"
+              tabindex="0"
+              *ngIf="step.controls.next.enabled"
+              (click)="next(step)"
+              [innerHTML]="step.controls.next.label"
+            ></button>
+            <button
+              type="button"
+              tabindex="0"
+              *ngIf="step.controls.done.enabled"
+              (click)="finish(step)"
+              [innerHTML]="step.controls.done.label"
+            ></button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- cdkTrapFocus -->

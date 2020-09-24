@@ -1,13 +1,8 @@
 import { Component, OnInit, HostListener, Input } from '@angular/core';
-import { FeatureTourConfig } from '../../models/feature-tour-config';
 
-import {
-  Step,
-  EventEnum,
-  StepBounds,
-  Setup,
-} from '../../ng-feature-tour.model';
-import { FeatureTourService } from '../../ng-feature-tour.service';
+import { FeatureTourConfig } from '../../models/feature-tour-config';
+import { FeatureTourStep } from '../../models/feature-tour-step';
+import { EventEnum, StepBounds } from '../../ng-feature-tour.model';
 
 @Component({
   selector: 'ng-feature-tour',
@@ -17,32 +12,74 @@ import { FeatureTourService } from '../../ng-feature-tour.service';
 export class NgFeatureTourComponent implements OnInit {
   @Input()
   tour: FeatureTourConfig;
-  steps: Step[];
+  steps: FeatureTourStep[];
   enabled: boolean;
-  setup: Setup;
 
-  constructor(private featureTourService: FeatureTourService) {}
+  constructor() {}
 
   ngOnInit(): void {
-    console.log(this.tour);
+    this.steps = this.tour.steps.map((step, i) => ({
+      id: `feature-tour-step-${step.target}`,
+      target: step.target,
+      index: i,
+      total: this.tour.steps.length,
+      title: step.title,
+      description: step.description,
+      visible: false,
+      enabled: false,
+      a11y: {
+        ariaDescription: step.description,
+        ariaLabel: this.tour.a11y.ariaLabel,
+        pagination: this.tour.a11y.pagination,
+      },
+      controls: {
+        abort: {
+          label: this.tour.controls.abort,
+          enabled: true,
+        },
+        previous: {
+          label: this.tour.controls.previous,
+          enabled: i > 0,
+        },
+        next: {
+          label: this.tour.controls.next,
+          enabled: i !== this.tour.steps.length - 1,
+        },
+        done: {
+          label: this.tour.controls.done,
+          enabled: i === this.tour.steps.length - 1,
+        },
+      },
+    }));
   }
 
-  private disableStep(step: Step): void {
+  start(target?: string): void {
+    const step = this.steps.filter((step) => step.target === target).shift();
+
+    if (step) {
+      this.enableStep(step);
+    } else {
+      this.enableStep(this.steps[0]);
+    }
+  }
+
+  private disableStep(step: FeatureTourStep): void {
     step.enabled = false;
     step.visible = false;
   }
 
-  private disableTour(step: Step, event: EventEnum): void {
+  private disableTour(step: FeatureTourStep, event: EventEnum): void {
     this.enabled = false;
     this.emitChangeEvent(step, event);
   }
 
-  private scrollToTop(step: Step): void {
-    window.scrollTo(0, document.getElementById(step.target).offsetTop - 16);
+  private scrollToTop(step: FeatureTourStep): void {
+    const stepElement = document.getElementById(step.target);
+    window.scrollTo(0, stepElement.offsetTop - 16);
   }
 
-  private emitChangeEvent(step: Step, event: EventEnum): void {
-    this.featureTourService.onChange.emit({ event, step });
+  private emitChangeEvent(step: FeatureTourStep, event: EventEnum): void {
+    console.log('TODO EMITTER');
   }
 
   private getBounds(step: HTMLElement, target: HTMLElement): StepBounds {
@@ -88,20 +125,17 @@ export class NgFeatureTourComponent implements OnInit {
     };
   }
 
-  private applyBounds(step: Step): void {
-    const stepId = `ft-step-${step.target}`;
-    const targetElement = document.getElementById(step.target);
-    const stepElement = document.getElementById(stepId);
-
-    step.bounds = this.getBounds(stepElement, targetElement);
+  private captureFocus(step: FeatureTourStep): void {
+    const trapFocus = document.getElementById(step.id).querySelector('h2');
+    setTimeout(() => {
+      (trapFocus as HTMLElement).focus();
+    }, 1);
   }
 
-  private captureFocus(step: Step): void {
-    const trapFocus = document.querySelector(`#ft-step-${step.target} h2`);
-    setTimeout(() => (trapFocus as HTMLElement).focus(), 0);
-  }
-
-  private enableStep(step: Step, toAbortStep?: Step): void {
+  private enableStep(
+    step: FeatureTourStep,
+    toAbortStep?: FeatureTourStep
+  ): void {
     this.scrollToTop(step);
     this.enabled = true;
     step.enabled = true;
@@ -109,7 +143,6 @@ export class NgFeatureTourComponent implements OnInit {
     // render delay trick
     setTimeout(() => {
       step.visible = true;
-      this.applyBounds(step);
       this.captureFocus(step);
 
       if (toAbortStep) {
@@ -134,7 +167,7 @@ export class NgFeatureTourComponent implements OnInit {
     this.emitChangeEvent(currentStep, EventEnum.Escape);
   }
 
-  close(step: Step): void {
+  close(step: FeatureTourStep): void {
     step.enabled = false;
     step.visible = false;
     this.enabled = false;
@@ -152,28 +185,29 @@ export class NgFeatureTourComponent implements OnInit {
     return `ft-title-${target} ft-description-${target}`;
   }
 
-  previous(currentStep: Step, currentStepIndex: number): void {
-    const step = this.steps[currentStepIndex - 1];
+  previous(step: FeatureTourStep): void {
+    const previousStep = this.steps[step.index - 1];
 
-    this.disableStep(currentStep);
-    this.enableStep(step);
+    this.disableStep(step);
+    this.enableStep(previousStep);
     this.emitChangeEvent(step, EventEnum.Previous);
   }
 
-  next(currentStep: Step, currentStepIndex: number): void {
-    const step = this.steps[currentStepIndex + 1];
+  next(step: FeatureTourStep): void {
+    const nextStep = this.steps[step.index + 1];
 
-    this.enableStep(step, currentStep);
-    this.emitChangeEvent(step, EventEnum.Next);
+    this.disableStep(step);
+    this.enableStep(nextStep);
+    this.emitChangeEvent(step, EventEnum.Previous);
   }
 
-  finish(currentStep: Step): void {
+  finish(currentStep: FeatureTourStep): void {
     this.disableStep(currentStep);
     this.disableTour(currentStep, EventEnum.Finish);
   }
 
-  abort(currentStep: Step): void {
-    this.disableStep(currentStep);
-    this.disableTour(currentStep, EventEnum.Abort);
+  abort(step: FeatureTourStep): void {
+    this.disableStep(step);
+    this.disableTour(step, EventEnum.Abort);
   }
 }

@@ -6,11 +6,19 @@ export interface FeatureTourStepConfig {
     ariaDescription: string;
   };
 }
+
 export interface FeatureTourConfig {
-  firstTarget: string;
   a11y: {
     ariaLabel: string;
     pagination: string;
   };
   steps: FeatureTourStepConfig[];
+  controls: FeatureTourStepControlsConfig;
+}
+
+export interface FeatureTourStepControlsConfig {
+  abort: string;
+  previous: string;
+  next: string;
+  done: string;
 }

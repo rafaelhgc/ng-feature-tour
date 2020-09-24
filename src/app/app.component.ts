@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgFeatureTourComponent } from './ng-feature-tour/components/feature-tour/ng-feature-tour.component';
 
 import { FeatureTourConfig } from './ng-feature-tour/models/feature-tour-config';
 
@@ -7,13 +8,21 @@ import { FeatureTourConfig } from './ng-feature-tour/models/feature-tour-config'
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
+  @ViewChild('tour')
+  tour: NgFeatureTourComponent;
+
   title = 'ng-feature-tour-app';
 
-  tour: FeatureTourConfig = {
-    firstTarget: 'feature-easy',
+  tourConfig: FeatureTourConfig = {
     a11y: {
       ariaLabel: 'tour de funcionalidades.',
       pagination: 'você está no passo {{index}} de {{total}}',
+    },
+    controls: {
+      abort: 'ok, já entendi',
+      previous: 'anterior',
+      next: 'próximo',
+      done: 'finalizar',
     },
     steps: [
       {
@@ -33,7 +42,7 @@ export class AppComponent implements OnInit {
         },
       },
       {
-        target: 'feature-easy',
+        target: 'feature-accessible',
         title: 'acessível',
         description: 'este componente é acessível',
         a11y: {
@@ -47,6 +56,6 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {}
 
   startTour(): void {
-    console.log('...');
+    this.tour.start();
   }
 }

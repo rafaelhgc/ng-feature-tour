@@ -1,3 +1,5 @@
+import { FeatureTourStep } from './models/feature-tour-step';
+
 export enum EventEnum {
   Start = 'START',
   Next = 'NEXT',
@@ -9,20 +11,7 @@ export enum EventEnum {
 
 export interface Event {
   event: EventEnum;
-  step: Step;
-}
-
-export interface Step {
-  target: string;
-  title: string;
-  description: string;
-  enabled?: boolean;
-  visible?: boolean;
-  bounds?: StepBounds;
-  a11y: {
-    description: string;
-    label: string;
-  };
+  step: FeatureTourStep;
 }
 
 export interface LensBounds {
@@ -37,17 +26,4 @@ export interface StepBounds {
   top: number;
   modifiers: string;
   lens: LensBounds;
-}
-
-export interface Setup {
-  a11y: {
-    pagination: string;
-  };
-  initialStep: string;
-  controls: {
-    abort: string;
-    previous: string;
-    next: string;
-    done: string;
-  };
 }
