@@ -1,4 +1,5 @@
 import {
+  AfterContentChecked,
   AfterViewInit,
   ChangeDetectorRef,
   Component,
@@ -33,17 +34,31 @@ export class FeatureTourStepComponent implements AfterViewInit {
 
   @Input()
   step: FeatureTourStep;
+
   @Output()
   change: EventEmitter<FeatureTourEvent>;
 
-  targetElement: HTMLElement;
   lensBounds: FeatureTourLensBounds;
+
   stepBounds: FeatureTourStepBounds;
 
   constructor(private ref: ChangeDetectorRef, private renderer: Renderer2) {
     this.change = new EventEmitter<FeatureTourEvent>();
     this.stepBounds = { left: 0, top: 0, modifiers: '' };
     this.lensBounds = { width: 0, height: 0, left: 0, top: 0 };
+  }
+
+  ngAfterViewInit(): void {
+    this.drawStep();
+  }
+
+  drawStep(): void {
+    this.scrollElementToTop();
+    this.applyLensBounds();
+    this.applyStepBounds();
+    this.buildStepBullets();
+    this.ref.detectChanges();
+    this.captureFocus();
   }
 
   buildStepBullets() {
@@ -65,59 +80,52 @@ export class FeatureTourStepComponent implements AfterViewInit {
     header.focus();
   }
 
-  drawStep(): void {
-    this.scrollElementToTop();
-    this.applyLensBounds();
-    this.applyStepBounds();
-    this.buildStepBullets();
-    this.ref.detectChanges();
-    this.captureFocus();
-  }
-
-  ngAfterViewInit(): void {
-    this.targetElement = document.getElementById(this.step.target);
-    this.drawStep();
-  }
-
   scrollElementToTop(): void {
     const stepElement = document.getElementById(this.step.target);
     window.scrollTo(0, stepElement.offsetTop - 16);
   }
 
   applyLensBounds(): void {
-    const rect: DOMRect = this.targetElement.getBoundingClientRect();
-    this.lensBounds = { ...rect.toJSON() };
+    const targetElement = document.getElementById(this.step.target);
+    const { width, height, left, top } = targetElement.getBoundingClientRect();
+
+    this.lensBounds = { width, height, left, top };
+  }
+
+  isTargetToTop({ top, height }): boolean {
+    return top > screen.availHeight - (top + height);
+  }
+
+  isTargetToLeft({ left }): boolean {
+    return left > screen.availWidth / 2;
   }
 
   applyStepBounds(): void {
     const margin = 32;
     const stepElement = document.getElementById(this.step.id);
+    const targetElement = document.getElementById(this.step.target);
+    const targetRect = targetElement.getBoundingClientRect();
     const stepRect = stepElement.getBoundingClientRect();
-    const targetRect = this.targetElement.getBoundingClientRect();
-
-    let left: number;
-    let top: number;
+    let left: number = 0;
+    let top: number = 0;
     let modifiers: string[] = [];
 
     // axis y
-    if (
-      targetRect.y >
-      screen.availHeight - (targetRect.y + targetRect.height)
-    ) {
+    if (this.isTargetToTop(targetRect)) {
       modifiers.push('to-top');
-      top = targetRect.y - stepRect.height - margin;
+      top = targetRect.top - stepRect.height - margin;
     } else {
       modifiers.push('to-bottom');
-      top = targetRect.y + targetRect.height + margin;
+      top = targetRect.top + targetRect.height + margin;
     }
 
     // axis x
-    if (targetRect.x > screen.availWidth / 2) {
+    if (this.isTargetToLeft(targetRect)) {
       modifiers.push('to-right');
-      left = targetRect.x + targetRect.width - stepRect.width;
+      left = targetRect.left + targetRect.width - stepRect.width;
     } else {
       modifiers.push('to-left');
-      left = targetRect.x;
+      left = targetRect.left;
     }
 
     this.stepBounds = { left, top, modifiers: modifiers.join(' ') };

@@ -55,6 +55,9 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "es5": {
+              "tsConfig": "./tsconfig.es5.json"
             }
           }
         },
@@ -66,6 +69,9 @@
           "configurations": {
             "production": {
               "browserTarget": "ng-feature-tour-app:build:production"
+            },
+            "es5": {
+              "browserTarget": "ng-feature-tour-app:build:es5"
             }
           }
         },
