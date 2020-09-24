@@ -9,7 +9,7 @@ export interface FeatureTourStepConfig {
 
 export interface FeatureTourConfig {
   a11y: {
-    ariaLabel: string;
+    ariaLabel?: string;
     pagination: string;
   };
   steps: FeatureTourStepConfig[];

@@ -41,10 +41,9 @@ export class NgFeatureTourComponent implements OnInit {
       total: this.tour.steps.length,
       title: step.title,
       description: step.description,
-      visible: false,
       enabled: false,
       a11y: {
-        ariaDescription: step.description,
+        ariaDescription: step.a11y.ariaDescription,
         ariaLabel: this.tour.a11y.ariaLabel,
         pagination: this.tour.a11y.pagination,
       },
@@ -81,7 +80,6 @@ export class NgFeatureTourComponent implements OnInit {
 
   private enableStep(step: FeatureTourStep): void {
     step.enabled = true;
-    step.visible = true;
   }
 
   onChange(change: FeatureTourEvent) {

@@ -41,6 +41,19 @@ export class FeatureTourStepComponent implements AfterViewInit {
     this.lensBounds = { width: 0, height: 0, left: 0, top: 0 };
   }
 
+  captureFocus(): void {
+    const header = document.getElementById(this.step.id).querySelector('h2');
+    header.focus();
+  }
+
+  drawStep(): void {
+    this.scrollElementToTop();
+    this.applyLensBounds();
+    this.applyStepBounds();
+    this.ref.detectChanges();
+    this.captureFocus();
+  }
+
   ngAfterViewInit(): void {
     this.targetElement = document.getElementById(this.step.target);
     this.drawStep();
@@ -114,12 +127,5 @@ export class FeatureTourStepComponent implements AfterViewInit {
   @HostListener('window:resize', [])
   onResize() {
     this.drawStep();
-  }
-
-  drawStep(): void {
-    this.scrollElementToTop();
-    this.applyLensBounds();
-    this.applyStepBounds();
-    this.ref.detectChanges();
   }
 }

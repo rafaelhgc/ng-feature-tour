@@ -10,7 +10,6 @@ export interface FeatureTourStep {
   total: number;
   title: string;
   description: string;
-  visible: boolean;
   enabled: boolean;
   a11y: {
     ariaDescription: string;

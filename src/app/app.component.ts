@@ -16,7 +16,6 @@ export class AppComponent {
 
   tourConfig: FeatureTourConfig = {
     a11y: {
-      ariaLabel: 'tour de funcionalidades.',
       pagination: 'você está no passo {index} de {total}',
     },
     controls: {
