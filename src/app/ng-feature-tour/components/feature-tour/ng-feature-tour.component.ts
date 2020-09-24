@@ -1,4 +1,5 @@
 import { Component, OnInit, HostListener, Input } from '@angular/core';
+import { FeatureTourConfig } from '../../models/feature-tour-config';
 
 import {
   Step,
@@ -15,11 +16,16 @@ import { FeatureTourService } from '../../ng-feature-tour.service';
 })
 export class NgFeatureTourComponent implements OnInit {
   @Input()
+  tour: FeatureTourConfig;
   steps: Step[];
   enabled: boolean;
   setup: Setup;
 
   constructor(private featureTourService: FeatureTourService) {}
+
+  ngOnInit(): void {
+    console.log(this.tour);
+  }
 
   private disableStep(step: Step): void {
     step.enabled = false;
@@ -110,25 +116,6 @@ export class NgFeatureTourComponent implements OnInit {
         this.disableStep(toAbortStep);
       }
     }, 0);
-  }
-
-  ngOnInit(): void {
-    if (!this.steps || this.steps.length === 0) {
-      throw 'NgFeatureTourComponent: no steps provided';
-    }
-
-    this.featureTourService.initialize.subscribe((setup: Setup) => {
-      const initialStep = this.steps
-        .filter((step) => step.target === setup.initialStep)
-        .shift();
-
-      if (!initialStep) {
-        throw `NgFeatureTourComponent: target "${setup.initialStep}" not found`;
-      }
-
-      this.setup = setup;
-      this.enableStep(initialStep);
-    });
   }
 
   @HostListener('document:keydown.escape', ['$event'])

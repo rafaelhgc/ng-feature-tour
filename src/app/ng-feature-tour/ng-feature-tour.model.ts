@@ -20,9 +20,9 @@ export interface Step {
   visible?: boolean;
   bounds?: StepBounds;
   a11y: {
-    description:string;
+    description: string;
     label: string;
-  }
+  };
 }
 
 export interface LensBounds {
