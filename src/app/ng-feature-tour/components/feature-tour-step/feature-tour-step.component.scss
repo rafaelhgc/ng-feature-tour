@@ -8,16 +8,20 @@
   left: 0;
 }
 
+.ft-lens {
+  position: fixed;
+  z-index: 9990;
+  box-shadow: 0 0 0 1000em rgba(0, 0, 0, 0.75);
+}
+
 .ft-step {
-  max-width: 320px;
-  min-width: 320px;
+  width: 320px;
   position: fixed;
   z-index: 9999;
   padding: 16px;
   border-radius: 4px;
   background-color: #ffffff;
   color: #444444;
-  transition: left 0.3s linear, top 0.3s linear, width 0.3s linear;
 }
 
 .ft-step::before {
@@ -76,14 +80,6 @@
   margin-right: 10px;
   border-radius: 50%;
   background-color: #bdc3c7;
-}
-
-.ft-lens {
-  position: fixed;
-  z-index: 9990;
-  box-shadow: 0 0 0 1000em rgba(0, 0, 0, 0.75);
-  transition: left 0.3s linear, top 0.3s linear, width 0.3s linear,
-    height 0.3s linear;
 }
 
 .ft-step-controls {

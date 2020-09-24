@@ -1,0 +1,10 @@
+<div class="ft-wrapper">
+  <div *ngFor="let step of steps">
+    <feature-tour-step
+      cdkTrapFocus
+      *ngIf="step.enabled"
+      [step]="step"
+      (change)="onChange($event)"
+    ></feature-tour-step>
+  </div>
+</div>

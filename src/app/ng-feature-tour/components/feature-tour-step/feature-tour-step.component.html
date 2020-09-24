@@ -1,0 +1,74 @@
+<div class="ft-scape-handler" (click)="onScape()"></div>
+
+<div
+  class="ft-lens"
+  [style.left.px]="lensBounds.left"
+  [style.top.px]="lensBounds.top"
+  [style.width.px]="lensBounds.width"
+  [style.height.px]="lensBounds.height"
+></div>
+<div
+  aria-modal="true"
+  role="dialog"
+  class="ft-step {{ stepBounds.modifiers }}"
+  [id]="step.id"
+  [attr.aria-roledescription]="step.a11y.ariaDescription"
+  [attr.aria-label]="step.a11y.ariaLabel"
+  [style.left.px]="stepBounds.left"
+  [style.top.px]="stepBounds.top"
+>
+  <h2 class="ft-step-title" tabindex="-1" [style.outline]="0">
+    {{ step.title }}
+  </h2>
+
+  <div class="ft-step-description">
+    {{ step.description }}
+  </div>
+
+  <div class="ft-step-bullet-list">
+    <span
+      *ngFor="let step of steps"
+      class="ft-step-bullet"
+      [class.is-current]="step.enabled"
+    ></span>
+  </div>
+
+  <div class="ft-step-pagination-description">
+    {{ step.a11y.pagination | paginationDescription: step.total:step.index }}
+  </div>
+
+  <div class="ft-step-controls">
+    <div class="ft-step-abort">
+      <button
+        type="button"
+        tabindex="0"
+        *ngIf="step.controls.abort.enabled"
+        (click)="abort(step)"
+        [innerHTML]="step.controls.abort.label"
+      ></button>
+    </div>
+    <div class="ft-step-navigation">
+      <button
+        type="button"
+        tabindex="0"
+        *ngIf="step.controls.previous.enabled"
+        (click)="previous(step)"
+        [innerHTML]="step.controls.previous.label"
+      ></button>
+      <button
+        type="button"
+        tabindex="0"
+        *ngIf="step.controls.next.enabled"
+        (click)="next(step)"
+        [innerHTML]="step.controls.next.label"
+      ></button>
+      <button
+        type="button"
+        tabindex="0"
+        *ngIf="step.controls.done.enabled"
+        (click)="done(step)"
+        [innerHTML]="step.controls.done.label"
+      ></button>
+    </div>
+  </div>
+</div>
