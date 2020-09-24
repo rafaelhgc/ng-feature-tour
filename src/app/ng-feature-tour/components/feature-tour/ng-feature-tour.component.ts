@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-
 import { FeatureTourConfig } from '../../models/feature-tour-config';
 import { FeatureTourStep } from '../../models/feature-tour-step';
 import {
@@ -10,7 +9,6 @@ import {
 @Component({
   selector: 'ng-feature-tour',
   templateUrl: './ng-feature-tour.component.html',
-  styleUrls: ['./ng-feature-tour.component.scss'],
 })
 export class NgFeatureTourComponent implements OnInit {
   @Input()

@@ -2,10 +2,13 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   EventEmitter,
   HostListener,
   Input,
   Output,
+  Renderer2,
+  ViewChild,
 } from '@angular/core';
 
 import {
@@ -23,9 +26,11 @@ import { FeatureTourStep } from '../../models/feature-tour-step';
 @Component({
   selector: 'feature-tour-step',
   templateUrl: './feature-tour-step.component.html',
-  styleUrls: ['./feature-tour-step.component.scss'],
 })
 export class FeatureTourStepComponent implements AfterViewInit {
+  @ViewChild('bullets')
+  bullets: ElementRef;
+
   @Input()
   step: FeatureTourStep;
   @Output()
@@ -35,10 +40,24 @@ export class FeatureTourStepComponent implements AfterViewInit {
   lensBounds: FeatureTourLensBounds;
   stepBounds: FeatureTourStepBounds;
 
-  constructor(private ref: ChangeDetectorRef) {
+  constructor(private ref: ChangeDetectorRef, private renderer: Renderer2) {
     this.change = new EventEmitter<FeatureTourEvent>();
     this.stepBounds = { left: 0, top: 0, modifiers: '' };
     this.lensBounds = { width: 0, height: 0, left: 0, top: 0 };
+  }
+
+  buildStepBullets() {
+    for (let i = 0; i < this.step.total; i++) {
+      const bullet = document.createElement('span');
+
+      if (i === this.step.index) {
+        bullet.classList.add('is-current');
+      }
+
+      bullet.classList.add('ft-step-bullet');
+
+      this.renderer.appendChild(this.bullets.nativeElement, bullet);
+    }
   }
 
   captureFocus(): void {
@@ -50,6 +69,7 @@ export class FeatureTourStepComponent implements AfterViewInit {
     this.scrollElementToTop();
     this.applyLensBounds();
     this.applyStepBounds();
+    this.buildStepBullets();
     this.ref.detectChanges();
     this.captureFocus();
   }

@@ -25,13 +25,7 @@
     {{ step.description }}
   </div>
 
-  <div class="ft-step-bullet-list">
-    <span
-      *ngFor="let step of steps"
-      class="ft-step-bullet"
-      [class.is-current]="step.enabled"
-    ></span>
-  </div>
+  <div #bullets class="ft-step-bullet-list"></div>
 
   <div class="ft-step-pagination-description">
     {{ step.a11y.pagination | paginationDescription: step.total:step.index }}
