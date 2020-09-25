@@ -49,6 +49,7 @@ export class FeatureTourStepComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.buildStepBullets();
     this.drawStep();
   }
 
@@ -56,7 +57,6 @@ export class FeatureTourStepComponent implements AfterViewInit {
     this.scrollElementToTop();
     this.applyLensBounds();
     this.applyStepBounds();
-    this.buildStepBullets();
     this.ref.detectChanges();
     this.captureFocus();
   }
