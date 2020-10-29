@@ -112,7 +112,7 @@ export class NgFeatureTourComponent implements OnInit {
     event.step.enabled = false;
     nextStep.enabled = true;
 
-    this.next.emit(event);
+    this.previous.emit(event);
   }
 
   onNext(event: FeatureTourEvent): void {
