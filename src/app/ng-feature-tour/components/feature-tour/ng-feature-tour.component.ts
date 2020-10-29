@@ -67,13 +67,15 @@ export class NgFeatureTourComponent implements OnInit {
   }
 
   start(target?: string): void {
-    const step = this.steps.filter((step) => step.target === target).shift();
+    const step =
+      this.steps.filter((step) => step.target === target).shift() ||
+      this.steps[0];
 
-    if (step) {
-      this.enableStep(step);
-    } else {
-      this.enableStep(this.steps[0]);
+    if (!step) {
+      throw 'no steps found';
     }
+
+    this.enableStep(step);
   }
 
   private enableStep(step: FeatureTourStep): void {
